@@ -33,13 +33,13 @@ public class MainActivity extends TabActivity {
         tabHost.addTab(spec);
 
         // Do the same for the other tabs
-        intent = new Intent().setClass(this, PlaylistActivity.class);
+        intent = new Intent().setClass(this, LibraryActivity.class);
         spec = tabHost.newTabSpec("library")
         			  .setIndicator(tabs[1], res.getDrawable(R.drawable.ic_tab_playlist))
                       .setContent(intent);
         tabHost.addTab(spec);
 
-        intent = new Intent().setClass(this, PlaylistActivity.class);
+        intent = new Intent().setClass(this, NowPlayingActivity.class);
         spec = tabHost.newTabSpec("now_playing")
                       .setIndicator(tabs[2], res.getDrawable(R.drawable.ic_tab_playlist))
                       .setContent(intent);

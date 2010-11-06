@@ -14,8 +14,9 @@ public class Playlist extends ListActivity {
 	
 	@Override
     public void onCreate(Bundle savedInstanceState) {
+        Log.d(TAG, "Playlist: onCreate");
+        
         super.onCreate(savedInstanceState);
-        Log.d(TAG, "Playlist Activity started");
 
         setListAdapter(new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1 , lvItems));
     }

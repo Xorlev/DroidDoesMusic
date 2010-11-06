@@ -9,9 +9,12 @@ public class NowPlaying extends Activity {
 	
 	@Override
     public void onCreate(Bundle savedInstanceState) {
+        Log.d(TAG, "NowPlaying: onCreate");
+        
         super.onCreate(savedInstanceState);
         setContentView(R.layout.nowplaying);
+              
         
-        Log.d(TAG, "NowPlaying Activity started");
+
     }
 }

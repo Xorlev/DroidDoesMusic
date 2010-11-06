@@ -13,10 +13,10 @@ public class Library extends ListActivity {
 	
 	@Override
     public void onCreate(Bundle savedInstanceState) {
+        Log.d(TAG, "Library: onCreate");
+        
         super.onCreate(savedInstanceState);
         
-        Log.d(TAG, "Library Activity started");
-
         // Grabs content URI for a unique list of Artists on the SDcard
         Uri Artists = Audio.Artists.EXTERNAL_CONTENT_URI;
 

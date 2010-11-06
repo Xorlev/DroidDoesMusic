@@ -8,7 +8,7 @@ import android.provider.MediaStore.Audio;
 import android.util.Log;
 import android.widget.SimpleCursorAdapter;
 
-public class LibraryActivity extends ListActivity {
+public class Library extends ListActivity {
 	protected static final String TAG = "DroidDoesMusic";
 	
 	@Override

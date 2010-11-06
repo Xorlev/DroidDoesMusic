@@ -4,7 +4,7 @@ import android.app.Activity;
 import android.os.Bundle;
 import android.util.Log;
 
-public class NowPlayingActivity extends Activity {
+public class NowPlaying extends Activity {
 	protected static final String TAG = "DroidDoesMusic";
 	
 	@Override

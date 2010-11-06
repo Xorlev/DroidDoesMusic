@@ -5,9 +5,12 @@ import android.content.Intent;
 import android.content.res.Resources;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.widget.TabHost;
 
-public class MainActivity extends TabActivity {      
+public class Main extends TabActivity {      
 	protected static final String TAG = "DroidDoesMusic";
 	
 	@Override
@@ -19,6 +22,24 @@ public class MainActivity extends TabActivity {
         setupTabs();
     }
 	
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+    	super.onCreateOptionsMenu(menu);
+    	MenuInflater inflater = getMenuInflater();
+    	inflater.inflate(R.menu.menu, menu);    	
+    	return true;
+    }
+    
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+    	switch (item.getItemId()) {
+    	case R.id.settings:
+    		startActivity(new Intent(this, Preferences.class));
+    		return true;
+    	}
+    	return false;
+    }
+	
 	public void setupTabs() {
         Resources res = getResources(); // Resource object to get Drawables
         TabHost tabHost = getTabHost();  // The activity TabHost
@@ -27,7 +48,7 @@ public class MainActivity extends TabActivity {
         String[] tabs =  res.getStringArray(R.array.tabs);
 
         // Create an Intent to launch an Activity for the tab (to be reused)
-        intent = new Intent().setClass(this, PlaylistActivity.class);
+        intent = new Intent().setClass(this, Playlist.class);
 
         // Initialize a TabSpec for each tab and add it to the TabHost
         spec = tabHost.newTabSpec("playlist")
@@ -36,13 +57,13 @@ public class MainActivity extends TabActivity {
         tabHost.addTab(spec);
 
         // Do the same for the other tabs
-        intent = new Intent().setClass(this, LibraryActivity.class);
+        intent = new Intent().setClass(this, Library.class);
         spec = tabHost.newTabSpec("library")
         			  .setIndicator(tabs[1], res.getDrawable(R.drawable.ic_tab_playlist))
                       .setContent(intent);
         tabHost.addTab(spec);
 
-        intent = new Intent().setClass(this, NowPlayingActivity.class);
+        intent = new Intent().setClass(this, NowPlaying.class);
         spec = tabHost.newTabSpec("now_playing")
                       .setIndicator(tabs[2], res.getDrawable(R.drawable.ic_tab_playlist))
                       .setContent(intent);

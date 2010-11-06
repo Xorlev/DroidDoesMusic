@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen
+	xmlns:android="http://schemas.android.com/apk/res/android">
+
+<PreferenceCategory android:title="@string/lastfm">
+	<CheckBoxPreference
+		android:key="lastfm_scrobble"
+		android:title="@string/lastfm_scrobble"
+		android:summary="@string/lastfm_scrobble_summary"
+		android:defaultValue="true" />
+</PreferenceCategory>
+</PreferenceScreen>

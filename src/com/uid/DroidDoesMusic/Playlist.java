@@ -5,7 +5,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.widget.ArrayAdapter;
 
-public class PlaylistActivity extends ListActivity {
+public class Playlist extends ListActivity {
 	protected static final String TAG = "DroidDoesMusic";
 	
     /** Called when the activity is first created. */

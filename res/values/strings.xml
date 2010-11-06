@@ -7,4 +7,11 @@
 		<item>Library</item>
 		<item>Now Playing</item>
 	</string-array>
+	
+	<string name="settings_label">Settings...</string>
+	<string name="settings_title">DDM Settings</string>
+	<string name="settings_shortcut">s</string>
+	<string name="lastfm">Last.FM</string>
+	<string name="lastfm_scrobble">Scrobbling</string>
+	<string name="lastfm_scrobble_summary">Enable Scrobbling to Last.FM</string>
 </resources>

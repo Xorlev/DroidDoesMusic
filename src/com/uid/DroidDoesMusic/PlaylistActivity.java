@@ -1,12 +1,12 @@
 package com.uid.DroidDoesMusic;
 
-import android.app.Activity;
+import android.app.ListActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
-public class DroidDoesMusic extends Activity {
+public class PlaylistActivity extends ListActivity {
     /** Called when the activity is first created. */
 	private ListView lv;
 	
@@ -16,8 +16,8 @@ public class DroidDoesMusic extends Activity {
 	@Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.music_list);
-        lv=(ListView)findViewById(R.id.ListView01);
+        //setContentView(R.layout.playlist);
+        lv=getListView();
         Log.d("TESSST", this.toString());
 
         lv.setAdapter(new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1 , lvItems));

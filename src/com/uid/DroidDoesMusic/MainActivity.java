@@ -4,14 +4,17 @@ import android.app.TabActivity;
 import android.content.Intent;
 import android.content.res.Resources;
 import android.os.Bundle;
+import android.util.Log;
 import android.widget.TabHost;
 
 public class MainActivity extends TabActivity {      
+	protected static final String TAG = "DroidDoesMusic";
 	
 	@Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.main);
+        Log.d(TAG, "Main TabHost Activity started");
         
         setupTabs();
     }

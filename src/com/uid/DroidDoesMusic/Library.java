@@ -16,6 +16,7 @@ import android.widget.TextView;
 
 public class Library extends ListActivity {
 	protected static final String TAG = "DroidDoesMusic";
+	boolean populated = false;
 	
 	@Override
     public void onCreate(Bundle savedInstanceState) {
@@ -23,15 +24,8 @@ public class Library extends ListActivity {
         
         super.onCreate(savedInstanceState);
         setContentView(R.layout.library);
-        
-        getArtists();
-        
-        IntentFilter filter = new IntentFilter();
-        filter.addAction(Intent.ACTION_MEDIA_MOUNTED);
-        filter.addAction(Intent.ACTION_MEDIA_REMOVED);
-        registerReceiver(onSdMounted, filter);
 
-        sdCheck();
+        populateDataIfReady();
     }
 	
 	@Override
@@ -39,34 +33,28 @@ public class Library extends ListActivity {
         Log.d(TAG, getClass().getSimpleName() + ": onResume");
 		super.onResume();
 		
-		IntentFilter filter = new IntentFilter();
-        filter.addAction(Intent.ACTION_MEDIA_MOUNTED);
-        filter.addAction(Intent.ACTION_MEDIA_REMOVED);
-        registerReceiver(onSdMounted, filter);
+		IntentFilter iff = new IntentFilter();
+		iff.addAction(Intent.ACTION_MEDIA_SHARED);
+		iff.addAction(Intent.ACTION_MEDIA_MOUNTED);
+		iff.addAction(Intent.ACTION_UMS_CONNECTED);
+		iff.addAction(Intent.ACTION_UMS_DISCONNECTED);
+		registerReceiver(this.externalMediaListener, iff);
+		
+		populateDataIfReady();
 	}
 	
 	@Override
 	public void onPause() {
-        Log.d(TAG, getClass().getSimpleName() + ": onPause");
-		super.onPause();
+        Log.d(TAG, getClass().getSimpleName() + ": onResume");
+		super.onResume();
 		
-		unregisterReceiver(onSdMounted);
-	}
-	
-	public void sdCheck() {
-        if (!isSdPresent()) {
-        	TextView tv = (TextView)findViewById(android.R.id.empty);
-        	tv.setText(getResources().getString(R.string.no_sd_card));
-        } else {
-        	getArtists();
-        }
-	}
-	
-	public static boolean isSdPresent() {
-	    return Environment.getExternalStorageState().equals(Environment.MEDIA_MOUNTED);
+		unregisterReceiver(this.externalMediaListener);
 	}
 	
 	public void getArtists() {
+		// Flag
+		populated = true;
+		
         // Grabs content URI for a unique list of Artists on the SDcard
         Uri Artists = Audio.Artists.EXTERNAL_CONTENT_URI;
 
@@ -85,11 +73,30 @@ public class Library extends ListActivity {
         setListAdapter(mAdapter);		
 	}
 	
-	BroadcastReceiver onSdMounted = new BroadcastReceiver() {
+	public void populateDataIfReady() {
+        if (!isSdPresent()) {
+        	TextView tv = (TextView)findViewById(android.R.id.empty);
+        	tv.setText(getResources().getString(R.string.no_sd_card));
+        } else if (!populated) {
+        	getArtists();
+        }
+	}
+	
+	public static boolean isSdPresent() {
+	    return Environment.getExternalStorageState().equals(Environment.MEDIA_MOUNTED);
+	}
+	
+	private BroadcastReceiver externalMediaListener = new BroadcastReceiver() {
 		@Override
 		public void onReceive(Context content, Intent intent) {
 	        Log.d(TAG, getClass().getSimpleName() + ": onReceive: " + intent.getData());
-	        sdCheck();
+	        receivedBroadcast(intent);
 		}
 	};
+	
+	private void receivedBroadcast(Intent i) {
+		Log.d(TAG, getClass().getSimpleName() + ": receivedBroadcast: " + i.getData());
+		
+		populateDataIfReady();
+	}
 }

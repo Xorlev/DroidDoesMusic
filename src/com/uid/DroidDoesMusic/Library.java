@@ -11,8 +11,12 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore.Audio;
 import android.util.Log;
+import android.view.Gravity;
+import android.view.View;
+import android.widget.ListView;
 import android.widget.SimpleCursorAdapter;
 import android.widget.TextView;
+import android.widget.Toast;
 
 public class Library extends ListActivity {
 	protected static final String TAG = "DroidDoesMusic";
@@ -49,6 +53,16 @@ public class Library extends ListActivity {
 		super.onResume();
 		
 		unregisterReceiver(this.externalMediaListener);
+	}
+	
+	@Override
+	public void onListItemClick(ListView l, View v, int position, long id) {
+		Log.d(TAG, getClass().getSimpleName() + ": onListItemClick: " + ((TextView)v).getText() + " (" + id + ")");
+		super.onListItemClick(l, v, position, id);
+		
+		Toast t = Toast.makeText(this, ((TextView)v).getText() + " (" + id + ")", Toast.LENGTH_LONG);
+		t.setGravity(Gravity.CENTER, 0, 0);
+		t.show();
 	}
 	
 	public void getArtists() {

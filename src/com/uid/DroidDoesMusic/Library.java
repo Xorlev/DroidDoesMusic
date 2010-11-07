@@ -9,6 +9,7 @@ import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
+import android.os.Handler;
 import android.provider.MediaStore.Audio;
 import android.util.Log;
 import android.view.Gravity;
@@ -40,6 +41,7 @@ public class Library extends ListActivity {
 		IntentFilter iff = new IntentFilter();
 		iff.addAction(Intent.ACTION_MEDIA_SHARED);
 		iff.addAction(Intent.ACTION_MEDIA_MOUNTED);
+		iff.addAction(Intent.ACTION_MEDIA_UNMOUNTED);
 		iff.addAction(Intent.ACTION_UMS_CONNECTED);
 		iff.addAction(Intent.ACTION_UMS_DISCONNECTED);
 		registerReceiver(this.externalMediaListener, iff);
@@ -52,7 +54,7 @@ public class Library extends ListActivity {
         Log.d(TAG, getClass().getSimpleName() + ": onResume");
 		super.onResume();
 		
-		unregisterReceiver(this.externalMediaListener);
+		//unregisterReceiver(this.externalMediaListener);
 	}
 	
 	@Override
@@ -111,6 +113,20 @@ public class Library extends ListActivity {
 	private void receivedBroadcast(Intent i) {
 		Log.d(TAG, getClass().getSimpleName() + ": receivedBroadcast: " + i.getData());
 		
-		populateDataIfReady();
+		//Toast t = Toast.makeText(this, "Intent received: " + i.getAction(), Toast.LENGTH_SHORT);
+		//t.setGravity(Gravity.CENTER, 0, 0);
+		//t.show();
+		
+		if (i.getAction().equals(Intent.ACTION_UMS_CONNECTED) || i.getAction().equals(Intent.ACTION_MEDIA_SHARED) || i.getAction().equals(Intent.ACTION_MEDIA_UNMOUNTED)) {
+			populated = false;
+		} else {
+			// Try again after 5 seconds using a handler
+			Handler h = new Handler();
+			h.postDelayed(new Runnable() {
+				public void run() {
+					populateDataIfReady();
+				}
+			}, 5000);
+		}
 	}
 }

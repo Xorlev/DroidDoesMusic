@@ -14,7 +14,7 @@ public class Playlist extends ListActivity {
 	
 	@Override
     public void onCreate(Bundle savedInstanceState) {
-        Log.d(TAG, "Playlist: onCreate");
+        Log.d(TAG, getClass().getSimpleName() + ": onCreate");
         
         super.onCreate(savedInstanceState);
 

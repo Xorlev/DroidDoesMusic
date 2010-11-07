@@ -8,6 +8,9 @@
 		<item>Now Playing</item>
 	</string-array>
 	
+	<string name="empty">No items in list</string>
+	<string name="no_sd_card">The SD Card is not Ready.</string>
+	
 	<string name="settings_label">Settings...</string>
 	<string name="settings_title">DDM Settings</string>
 	<string name="settings_shortcut">s</string>

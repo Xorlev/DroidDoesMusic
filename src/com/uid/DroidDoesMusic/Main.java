@@ -15,7 +15,7 @@ public class Main extends TabActivity {
 	
 	@Override
     public void onCreate(Bundle savedInstanceState) {
-        Log.d(TAG, "Main: onCreate");
+        Log.d(TAG, getClass().getSimpleName() + ": onCreate");
         
 		super.onCreate(savedInstanceState);
         setContentView(R.layout.main);

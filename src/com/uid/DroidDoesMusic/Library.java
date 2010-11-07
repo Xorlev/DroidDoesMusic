@@ -51,10 +51,10 @@ public class Library extends ListActivity {
 	
 	@Override
 	public void onPause() {
-        Log.d(TAG, getClass().getSimpleName() + ": onResume");
+        Log.d(TAG, getClass().getSimpleName() + ": onPause");
 		super.onResume();
 		
-		//unregisterReceiver(this.externalMediaListener);
+		unregisterReceiver(this.externalMediaListener);
 	}
 	
 	@Override
@@ -112,10 +112,6 @@ public class Library extends ListActivity {
 	
 	private void receivedBroadcast(Intent i) {
 		Log.d(TAG, getClass().getSimpleName() + ": receivedBroadcast: " + i.getData());
-		
-		//Toast t = Toast.makeText(this, "Intent received: " + i.getAction(), Toast.LENGTH_SHORT);
-		//t.setGravity(Gravity.CENTER, 0, 0);
-		//t.show();
 		
 		if (i.getAction().equals(Intent.ACTION_UMS_CONNECTED) || i.getAction().equals(Intent.ACTION_MEDIA_SHARED) || i.getAction().equals(Intent.ACTION_MEDIA_UNMOUNTED)) {
 			populated = false;

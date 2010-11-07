@@ -9,7 +9,7 @@ public class Playlist extends ListActivity {
 	protected static final String TAG = "DroidDoesMusic";
 	
     /** Called when the activity is first created. */
-	private String[] lvItems = {"Lil John", "Lil Wayne", "Yount Jeezy", "Chicago" };             
+	private String[] lvItems = {"Lil John", "Lil Wayne", "Yount Jeezy", "Chicago", "Fratellis" };             
 	
 	
 	@Override

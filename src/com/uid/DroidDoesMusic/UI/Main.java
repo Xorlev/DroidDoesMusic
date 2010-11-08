@@ -18,7 +18,7 @@ import com.uid.DroidDoesMusic.player.Player;
 
 public class Main extends TabActivity {      
 	protected static final String TAG = "DroidDoesMusic";
-	
+	private MediaPlayer mp;
 	@Override
     public void onCreate(Bundle savedInstanceState) {
         Log.d(TAG, getClass().getSimpleName() + ": onCreate");
@@ -46,7 +46,7 @@ public class Main extends TabActivity {
     	// Switch over options selected
     	switch (item.getItemId()) {
     	case R.id.settings:
-    	    MediaPlayer mp = new MediaPlayer();
+    	    mp = new MediaPlayer();
     	    try {
     			mp.setDataSource("/sdcard/Music/3OH!3/Want [Explicit]/03 - Dont Trust Me (Explicit Album Version).mp3");
     		} catch (IllegalArgumentException e) {
@@ -69,6 +69,7 @@ public class Main extends TabActivity {
     			e.printStackTrace();
     		}
     	    mp.start();
+    	    mp.seekTo((int) (.45*mp.getDuration()));
     		startActivity(new Intent(this, Preferences.class));
     		return true;
     	}
@@ -118,6 +119,11 @@ public class Main extends TabActivity {
 
         // Set current tab to Library
         tabHost.setCurrentTab(1);
+	}
+	@Override
+	public void onDestroy(){
+		super.onDestroy();
+	    mp.pause();
 	}
 }
 

@@ -24,7 +24,9 @@
         <activity android:name=".UI.Preferences"
                   android:label="@string/settings_title">
         </activity>
-
+		<service android:name=".player.Player"
+					>
+		</service>
     </application>
     <uses-sdk android:minSdkVersion="7" />
 

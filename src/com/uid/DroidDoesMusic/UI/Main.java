@@ -1,16 +1,20 @@
 package com.uid.DroidDoesMusic.UI;
 
-import com.uid.DroidDoesMusic.R;
+import java.io.IOException;
 
 import android.app.TabActivity;
 import android.content.Intent;
 import android.content.res.Resources;
+import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.widget.TabHost;
+
+import com.uid.DroidDoesMusic.R;
+import com.uid.DroidDoesMusic.player.Player;
 
 public class Main extends TabActivity {      
 	protected static final String TAG = "DroidDoesMusic";
@@ -22,6 +26,7 @@ public class Main extends TabActivity {
 		super.onCreate(savedInstanceState);
         setContentView(R.layout.main);
 
+       // startService(new Intent("com.uid.DroidDoesMusic.player.Player"));
         setupTabs();
     }
 	
@@ -41,6 +46,29 @@ public class Main extends TabActivity {
     	// Switch over options selected
     	switch (item.getItemId()) {
     	case R.id.settings:
+    	    MediaPlayer mp = new MediaPlayer();
+    	    try {
+    			mp.setDataSource("/sdcard/Music/3OH!3/Want [Explicit]/03 - Dont Trust Me (Explicit Album Version).mp3");
+    		} catch (IllegalArgumentException e) {
+    			// TODO Auto-generated catch block
+    			e.printStackTrace();
+    		} catch (IllegalStateException e) {
+    			// TODO Auto-generated catch block
+    			e.printStackTrace();
+    		} catch (IOException e) {
+    			// TODO Auto-generated catch block
+    			e.printStackTrace();
+    		}
+    	    try {
+    			mp.prepare();
+    		} catch (IllegalStateException e) {
+    			// TODO Auto-generated catch block
+    			e.printStackTrace();
+    		} catch (IOException e) {
+    			// TODO Auto-generated catch block
+    			e.printStackTrace();
+    		}
+    	    mp.start();
     		startActivity(new Intent(this, Preferences.class));
     		return true;
     	}

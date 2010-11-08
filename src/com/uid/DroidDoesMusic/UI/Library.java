@@ -26,7 +26,7 @@ public class Library extends ListActivity {
 	public static final int ARTIST_VIEW = 0;
 	public static final int ALBUM_VIEW = 1;
 	public static final int SONG_VIEW = 2;
-	
+	int instanceView;
 	boolean populated = false;
 	
 	@Override
@@ -36,7 +36,11 @@ public class Library extends ListActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.library);
 
-        populateDataIfReady();
+        // Get extra data from intent
+        instanceView = getIntent().getExtras().getInt("view");
+        
+        // Populate ListView
+        populateDataIfReady(instanceView);
     }
 	
 	@Override
@@ -52,7 +56,7 @@ public class Library extends ListActivity {
 		iff.addAction(Intent.ACTION_UMS_DISCONNECTED);
 		registerReceiver(this.externalMediaListener, iff);
 		
-		populateDataIfReady();
+		populateDataIfReady(instanceView);
 	}
 	
 	@Override
@@ -74,33 +78,74 @@ public class Library extends ListActivity {
 	}
 	
 	public void getArtists() {
-		// Flag
-		populated = true;
-		
         // Grabs content URI for a unique list of Artists on the SDcard
-        Uri Artists = Audio.Artists.EXTERNAL_CONTENT_URI;
+        Uri extUri = Audio.Artists.EXTERNAL_CONTENT_URI;
 
         // Columns to grab from the DB, then the expected mappings
         String[] projection = new String[] {Audio.Artists._ID, Audio.Artists.ARTIST};
         String[] displayColumns = new String[] {Audio.ArtistColumns.ARTIST};
         int[] display = new int[] { android.R.id.text1 };
+        int layout = android.R.layout.simple_list_item_1;
+        
+        getData(extUri, projection, displayColumns, display, layout);
+	}
+	
+	public void getAlbums() {
+        // Grabs content URI for a unique list of Artists on the SDcard
+        Uri extUri = Audio.Albums.EXTERNAL_CONTENT_URI;
+
+        // Columns to grab from the DB, then the expected mappings
+        String[] projection = new String[] {Audio.Albums._ID, Audio.Albums.ALBUM, Audio.Albums.ARTIST};
+        String[] displayColumns = new String[] {Audio.AlbumColumns.ALBUM, Audio.Albums.ARTIST};
+        int[] display = new int[] { android.R.id.text1, android.R.id.text2 };
+        int layout = android.R.layout.simple_list_item_2;
+        
+        getData(extUri, projection, displayColumns, display, layout);
+	}
+	
+	public void getSongs() {
+        // Grabs content URI for a unique list of Artists on the SDcard
+        Uri extUri = Audio.Media.EXTERNAL_CONTENT_URI;
+
+        // Columns to grab from the DB, then the expected mappings
+        String[] projection = new String[] {Audio.Artists._ID, Audio.Media.TITLE, Audio.Media.ARTIST};
+        String[] displayColumns = new String[] {Audio.Media.TITLE, Audio.Media.ARTIST};
+        int[] display = new int[] { android.R.id.text1, android.R.id.text2 };
+        int layout = android.R.layout.simple_list_item_2;
+        
+        getData(extUri, projection, displayColumns, display, layout);
+	}
+	
+	public void getData(Uri datauri, String[] projection, String[] displayColumns, int[] display, int layout) {
+		// Flag
+		populated = true;
         
         // Activity-managed cursor to get sorted list of artists
-        Cursor cur = managedQuery(Artists, projection, null, null, Audio.ArtistColumns.ARTIST + " ASC");
+        Cursor cur = managedQuery(datauri, projection, null, null, displayColumns[0] + " ASC");
         
         // SimpleCursorAdapter maps the cursor columns to simplelistitems
-        SimpleCursorAdapter mAdapter = new SimpleCursorAdapter(this, android.R.layout.simple_list_item_1, cur, displayColumns, display);
+        SimpleCursorAdapter mAdapter = new SimpleCursorAdapter(this, layout, cur, displayColumns, display);
         
         // Set adapter of listview to the SimpleCursorAdapter 
         setListAdapter(mAdapter);		
 	}
 	
-	public void populateDataIfReady() {
+	public void populateDataIfReady(int view) {
         if (!isSdPresent()) {
         	TextView tv = (TextView)findViewById(android.R.id.empty);
         	tv.setText(getResources().getString(R.string.no_sd_card));
         } else if (!populated) {
-        	getArtists();
+        	switch (view) {
+        	case ARTIST_VIEW:
+        		getArtists();
+        		return;
+        	case ALBUM_VIEW:
+        		getAlbums();
+        		return;
+        	case SONG_VIEW:
+        		getSongs();
+        		return;
+        	}
         }
 	}
 	
@@ -126,7 +171,7 @@ public class Library extends ListActivity {
 			Handler h = new Handler();
 			h.postDelayed(new Runnable() {
 				public void run() {
-					populateDataIfReady();
+					populateDataIfReady(instanceView);
 				}
 			}, 5000);
 		}

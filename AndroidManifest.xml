@@ -4,7 +4,7 @@
       android:versionCode="1"
       android:versionName="1.0">
     <application android:icon="@drawable/icon" android:label="@string/app_name" android:debuggable="true">
-    	<activity android:name=".Main"
+    	<activity android:name=".UI.Main"
     			  android:label="@string/app_name"
     			  android:theme="@android:style/Theme.NoTitleBar">
     		<intent-filter>
@@ -12,20 +12,20 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
     	</activity>
-        <activity android:name=".Playlist"
+        <activity android:name=".UI.Playlist"
                   android:label="@string/app_name">
         </activity>
-        <activity android:name=".Library"
+        <activity android:name=".UI.Library"
                   android:label="@string/app_name">
         </activity>
-        <activity android:name=".NowPlaying"
+        <activity android:name=".UI.NowPlaying"
                   android:label="@string/app_name">
         </activity>
-        <activity android:name=".Preferences"
+        <activity android:name=".UI.Preferences"
                   android:label="@string/settings_title">
         </activity>
 
     </application>
-    <uses-sdk android:minSdkVersion="8" />
+    <uses-sdk android:minSdkVersion="7" />
 
 </manifest> 

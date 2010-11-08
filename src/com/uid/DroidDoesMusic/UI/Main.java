@@ -1,4 +1,6 @@
-package com.uid.DroidDoesMusic;
+package com.uid.DroidDoesMusic.UI;
+
+import com.uid.DroidDoesMusic.R;
 
 import android.app.TabActivity;
 import android.content.Intent;

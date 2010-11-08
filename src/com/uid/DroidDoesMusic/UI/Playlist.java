@@ -1,4 +1,4 @@
-package com.uid.DroidDoesMusic;
+package com.uid.DroidDoesMusic.UI;
 
 import android.app.ListActivity;
 import android.os.Bundle;

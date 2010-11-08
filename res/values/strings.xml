@@ -3,8 +3,10 @@
     <string name="hello">Hello World, DroidDoesMusic!</string>
     <string name="app_name">DroidDoesMusic</string>
 	<string-array name="tabs">
-		<item>Playlist</item>
-		<item>Library</item>
+		<item>Playlists</item>
+		<item>Artists</item>
+		<item>Albums</item>
+		<item>Songs</item>
 		<item>Now Playing</item>
 	</string-array>
 	

@@ -1,11 +1,10 @@
 package com.uid.DroidDoesMusic.UI;
 
-import java.io.IOException;
+import com.uid.DroidDoesMusic.R;
 
 import android.app.TabActivity;
 import android.content.Intent;
 import android.content.res.Resources;
-import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
@@ -13,12 +12,9 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.widget.TabHost;
 
-import com.uid.DroidDoesMusic.R;
-import com.uid.DroidDoesMusic.player.Player;
-
 public class Main extends TabActivity {      
 	protected static final String TAG = "DroidDoesMusic";
-	private MediaPlayer mp;
+	
 	@Override
     public void onCreate(Bundle savedInstanceState) {
         Log.d(TAG, getClass().getSimpleName() + ": onCreate");
@@ -26,7 +22,6 @@ public class Main extends TabActivity {
 		super.onCreate(savedInstanceState);
         setContentView(R.layout.main);
 
-       // startService(new Intent("com.uid.DroidDoesMusic.player.Player"));
         setupTabs();
     }
 	
@@ -46,30 +41,6 @@ public class Main extends TabActivity {
     	// Switch over options selected
     	switch (item.getItemId()) {
     	case R.id.settings:
-    	    mp = new MediaPlayer();
-    	    try {
-    			mp.setDataSource("/sdcard/Music/3OH!3/Want [Explicit]/03 - Dont Trust Me (Explicit Album Version).mp3");
-    		} catch (IllegalArgumentException e) {
-    			// TODO Auto-generated catch block
-    			e.printStackTrace();
-    		} catch (IllegalStateException e) {
-    			// TODO Auto-generated catch block
-    			e.printStackTrace();
-    		} catch (IOException e) {
-    			// TODO Auto-generated catch block
-    			e.printStackTrace();
-    		}
-    	    try {
-    			mp.prepare();
-    		} catch (IllegalStateException e) {
-    			// TODO Auto-generated catch block
-    			e.printStackTrace();
-    		} catch (IOException e) {
-    			// TODO Auto-generated catch block
-    			e.printStackTrace();
-    		}
-    	    mp.start();
-    	    mp.seekTo((int) (.45*mp.getDuration()));
     		startActivity(new Intent(this, Preferences.class));
     		return true;
     	}
@@ -103,27 +74,43 @@ public class Main extends TabActivity {
                       .setContent(intent);
         tabHost.addTab(spec);
 
+        //
         // Library
+        //
+        
+        // Artists
         intent = new Intent().setClass(this, Library.class);
-        spec = tabHost.newTabSpec("library")
+        intent.putExtra("view", Library.ARTIST_VIEW);
+        spec = tabHost.newTabSpec("library_artists")
         			  .setIndicator(tabs[1], res.getDrawable(R.drawable.ic_tab_playlist))
                       .setContent(intent);
         tabHost.addTab(spec);
-
-        // Now Playing
-        intent = new Intent().setClass(this, NowPlaying.class);
-        spec = tabHost.newTabSpec("now_playing")
-                      .setIndicator(tabs[2], res.getDrawable(R.drawable.ic_tab_playlist))
+        
+        // Albums
+        intent = new Intent().setClass(this, Library.class);
+        intent.putExtra("view", Library.ALBUM_VIEW);
+        spec = tabHost.newTabSpec("library_albums")
+        			  .setIndicator(tabs[2], res.getDrawable(R.drawable.ic_tab_playlist))
+                      .setContent(intent);
+        tabHost.addTab(spec);
+        
+        // Songs
+        intent = new Intent().setClass(this, Library.class);
+        intent.putExtra("view", Library.SONG_VIEW);
+        spec = tabHost.newTabSpec("library_songs")
+        			  .setIndicator(tabs[3], res.getDrawable(R.drawable.ic_tab_playlist))
                       .setContent(intent);
         tabHost.addTab(spec);
 
+        /*// Now Playing
+        intent = new Intent().setClass(this, NowPlaying.class);
+        spec = tabHost.newTabSpec("now_playing")
+                      .setIndicator(tabs[4], res.getDrawable(R.drawable.ic_tab_playlist))
+                      .setContent(intent);
+        tabHost.addTab(spec);*/
+
         // Set current tab to Library
         tabHost.setCurrentTab(1);
-	}
-	@Override
-	public void onDestroy(){
-		super.onDestroy();
-	    mp.pause();
 	}
 }
 

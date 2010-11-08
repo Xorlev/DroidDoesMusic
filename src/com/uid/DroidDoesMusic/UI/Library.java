@@ -23,6 +23,10 @@ import android.widget.Toast;
 
 public class Library extends ListActivity {
 	protected static final String TAG = "DroidDoesMusic";
+	public static final int ARTIST_VIEW = 0;
+	public static final int ALBUM_VIEW = 1;
+	public static final int SONG_VIEW = 2;
+	
 	boolean populated = false;
 	
 	@Override

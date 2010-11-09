@@ -69,10 +69,11 @@ public class Library extends ListActivity {
 	
 	@Override
 	public void onListItemClick(ListView l, View v, int position, long id) {
-		Log.d(TAG, getClass().getSimpleName() + ": onListItemClick: " + ((TextView)v).getText() + " (" + id + ")");
+		Log.d(TAG, getClass().getSimpleName() + ": onListItemClick: (" + id + ")");
 		super.onListItemClick(l, v, position, id);
 		
-		Toast t = Toast.makeText(this, ((TextView)v).getText() + " (" + id + ")", Toast.LENGTH_LONG);
+		String selection = l.getItemAtPosition(position).toString();
+		Toast t = Toast.makeText(this, selection + " (" + id + ")", Toast.LENGTH_LONG);
 		t.setGravity(Gravity.CENTER, 0, 0);
 		t.show();
 	}
@@ -82,12 +83,15 @@ public class Library extends ListActivity {
         Uri extUri = Audio.Artists.EXTERNAL_CONTENT_URI;
 
         // Columns to grab from the DB, then the expected mappings
-        String[] projection = new String[] {Audio.Artists._ID, Audio.Artists.ARTIST};
-        String[] displayColumns = new String[] {Audio.ArtistColumns.ARTIST};
-        int[] display = new int[] { android.R.id.text1 };
-        int layout = android.R.layout.simple_list_item_1;
+        String[] projection = new String[] {Audio.Artists._ID, Audio.Artists.ARTIST, Audio.Artists.NUMBER_OF_ALBUMS};
+        String[] displayColumns = new String[] {Audio.Artists.ARTIST, Audio.Artists.NUMBER_OF_ALBUMS};
+        int[] display = new int[] { android.R.id.text1, android.R.id.text2 };
         
-        getData(extUri, projection, displayColumns, display, layout);
+        String sort = Audio.Media.ARTIST + " ASC";
+        
+        int layout = android.R.layout.simple_list_item_2;
+        
+        getData(extUri, projection, displayColumns, display, sort, layout);
 	}
 	
 	public void getAlbums() {
@@ -96,11 +100,14 @@ public class Library extends ListActivity {
 
         // Columns to grab from the DB, then the expected mappings
         String[] projection = new String[] {Audio.Albums._ID, Audio.Albums.ALBUM, Audio.Albums.ARTIST};
-        String[] displayColumns = new String[] {Audio.AlbumColumns.ALBUM, Audio.Albums.ARTIST};
+        String[] displayColumns = new String[] {Audio.Albums.ALBUM, Audio.Albums.ARTIST};
         int[] display = new int[] { android.R.id.text1, android.R.id.text2 };
+
+        String sort = Audio.Media.ARTIST + " ASC, " + Audio.Albums.ALBUM + " ASC";
+        
         int layout = android.R.layout.simple_list_item_2;
         
-        getData(extUri, projection, displayColumns, display, layout);
+        getData(extUri, projection, displayColumns, display, sort, layout);
 	}
 	
 	public void getSongs() {
@@ -108,20 +115,23 @@ public class Library extends ListActivity {
         Uri extUri = Audio.Media.EXTERNAL_CONTENT_URI;
 
         // Columns to grab from the DB, then the expected mappings
-        String[] projection = new String[] {Audio.Artists._ID, Audio.Media.TITLE, Audio.Media.ARTIST};
+        String[] projection = new String[] {Audio.Artists._ID, Audio.Media.TITLE, Audio.Media.ARTIST, Audio.Media.ALBUM};
         String[] displayColumns = new String[] {Audio.Media.TITLE, Audio.Media.ARTIST};
         int[] display = new int[] { android.R.id.text1, android.R.id.text2 };
+
+        String sort = Audio.Media.ARTIST + " ASC, " + Audio.Media.ALBUM + " ASC";
+        
         int layout = android.R.layout.simple_list_item_2;
         
-        getData(extUri, projection, displayColumns, display, layout);
+        getData(extUri, projection, displayColumns, display, sort, layout);
 	}
 	
-	public void getData(Uri datauri, String[] projection, String[] displayColumns, int[] display, int layout) {
+	public void getData(Uri datauri, String[] projection, String[] displayColumns, int[] display, String sort, int layout) {
 		// Flag
 		populated = true;
-        
+
         // Activity-managed cursor to get sorted list of artists
-        Cursor cur = managedQuery(datauri, projection, null, null, displayColumns[0] + " ASC");
+        Cursor cur = managedQuery(datauri, projection, null, null, sort);
         
         // SimpleCursorAdapter maps the cursor columns to simplelistitems
         SimpleCursorAdapter mAdapter = new SimpleCursorAdapter(this, layout, cur, displayColumns, display);

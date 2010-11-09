@@ -1,27 +1,32 @@
 package com.uid.DroidDoesMusic.UI;
 
-import com.uid.DroidDoesMusic.R;
-
 import android.app.TabActivity;
+import android.content.ComponentName;
+import android.content.Context;
 import android.content.Intent;
+import android.content.ServiceConnection;
 import android.content.res.Resources;
 import android.os.Bundle;
+import android.os.IBinder;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.widget.TabHost;
 
+import com.uid.DroidDoesMusic.R;
+import com.uid.DroidDoesMusic.player.Player;
+
 public class Main extends TabActivity {      
 	protected static final String TAG = "DroidDoesMusic";
-	
+	protected Player mPlayer;
 	@Override
     public void onCreate(Bundle savedInstanceState) {
         Log.d(TAG, getClass().getSimpleName() + ": onCreate");
-        
+        bind();
 		super.onCreate(savedInstanceState);
         setContentView(R.layout.main);
-
+        
         setupTabs();
     }
 	
@@ -47,6 +52,24 @@ public class Main extends TabActivity {
     	return false;
     }
 	
+    private void bind() {
+    	Log.d(TAG, "Attempting to bind to Player" );
+    	bindService(new Intent(this, Player.class), mConnection, Context.BIND_AUTO_CREATE);
+    }
+    public boolean isPlayerBound=false;
+    private ServiceConnection mConnection = new ServiceConnection() {
+    	public void onServiceConnected(ComponentName classname, IBinder service){
+    		Log.d(TAG, "Player Service Connected" +classname.toShortString());
+    		Player player = ((Player.DataBinder)service).getService();
+    		mPlayer = player;
+    		isPlayerBound=true;
+    	}
+    	public void onServiceDisconnected(ComponentName classname){
+    		Log.d(TAG, "Player Service Disconnected");
+    		isPlayerBound = false;
+    		
+    	}
+    };
 	public void setupTabs() {
 		// Resource object for drawables
         Resources res = getResources();

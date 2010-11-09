@@ -26,6 +26,7 @@ public class Library extends ListActivity {
 	public static final int ARTIST_VIEW = 0;
 	public static final int ALBUM_VIEW = 1;
 	public static final int SONG_VIEW = 2;
+	Cursor cur;
 	int instanceView;
 	boolean populated = false;
 	
@@ -72,7 +73,8 @@ public class Library extends ListActivity {
 		Log.d(TAG, getClass().getSimpleName() + ": onListItemClick: (" + id + ")");
 		super.onListItemClick(l, v, position, id);
 		
-		String selection = l.getItemAtPosition(position).toString();
+		cur.moveToPosition(position);
+		String selection = cur.getString(0);
 		Toast t = Toast.makeText(this, selection + " (" + id + ")", Toast.LENGTH_LONG);
 		t.setGravity(Gravity.CENTER, 0, 0);
 		t.show();
@@ -115,11 +117,11 @@ public class Library extends ListActivity {
         Uri extUri = Audio.Media.EXTERNAL_CONTENT_URI;
 
         // Columns to grab from the DB, then the expected mappings
-        String[] projection = new String[] {Audio.Artists._ID, Audio.Media.TITLE, Audio.Media.ARTIST, Audio.Media.ALBUM};
+        String[] projection = new String[] {Audio.Artists._ID, Audio.Media.TITLE, Audio.Media.ARTIST, Audio.Media.ALBUM, Audio.Media.TRACK};
         String[] displayColumns = new String[] {Audio.Media.TITLE, Audio.Media.ARTIST};
         int[] display = new int[] { android.R.id.text1, android.R.id.text2 };
 
-        String sort = Audio.Media.ARTIST + " ASC, " + Audio.Media.ALBUM + " ASC";
+        String sort = Audio.Media.ARTIST + " ASC, " + Audio.Media.ALBUM + " ASC, " + Audio.Media.TRACK + " ASC";
         
         int layout = android.R.layout.simple_list_item_2;
         
@@ -131,7 +133,7 @@ public class Library extends ListActivity {
 		populated = true;
 
         // Activity-managed cursor to get sorted list of artists
-        Cursor cur = managedQuery(datauri, projection, null, null, sort);
+        cur = managedQuery(datauri, projection, null, null, sort);
         
         // SimpleCursorAdapter maps the cursor columns to simplelistitems
         SimpleCursorAdapter mAdapter = new SimpleCursorAdapter(this, layout, cur, displayColumns, display);

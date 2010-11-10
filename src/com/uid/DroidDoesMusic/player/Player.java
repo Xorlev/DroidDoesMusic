@@ -8,12 +8,14 @@ import android.media.MediaPlayer;
 import android.os.Binder;
 import android.os.IBinder;
 import android.util.Log;
+import android.widget.Toast;
 
 public class Player extends Service {
 	MediaPlayer mp = new MediaPlayer();
 	public final String TAG="Player";
 	public void onCreate(){
-		
+		super.onCreate();
+		Toast.makeText(this, "Player started...", Toast.LENGTH_SHORT).show();
 	}
 	@Override
 	public int onStartCommand(Intent intent, int flags, int startId){
@@ -21,7 +23,8 @@ public class Player extends Service {
 	}
 	@Override
 	public void onDestroy(){
-		
+		super.onDestroy();
+		Toast.makeText(this, "Player destroyed...", Toast.LENGTH_SHORT).show();
 	}
 	
 	public class DataBinder extends Binder {

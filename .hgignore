@@ -1,2 +1,8 @@
+syntax: glob
+
+*.bak
+*~
+.*.swp
+*.DS_Store
 bin
 gen

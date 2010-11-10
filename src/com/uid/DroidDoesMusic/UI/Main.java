@@ -16,7 +16,6 @@ import android.widget.TabHost;
 
 import com.uid.DroidDoesMusic.R;
 import com.uid.DroidDoesMusic.player.Player;
-import com.uid.DroidDoesMusic.util.PlaylistHandler;
 
 public class Main extends TabActivity {      
 	protected static final String TAG = "DroidDoesMusic";

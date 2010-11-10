@@ -24,8 +24,10 @@
         <activity android:name=".UI.Preferences"
                   android:label="@string/settings_title">
         </activity>
-		<service android:name=".player.Player"
-					>
+		<service android:name=".player.Player">
+			<intent-filter>
+				<action android:name="com.uid.DroidDoesMusic.player.Player" />
+			</intent-filter>
 		</service>
     </application>
     <uses-sdk android:minSdkVersion="7" />

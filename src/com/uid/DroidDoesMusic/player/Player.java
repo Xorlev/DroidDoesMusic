@@ -39,18 +39,7 @@ public class Player extends Service {
 	
 	public void startMusic(){
 	    
-	    try {
-			mp.setDataSource("/sdcard/Music/3OH!3/Want [Explicit]/03 - Dont Trust Me (Explicit Album Version).mp3");
-		} catch (IllegalArgumentException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (IllegalStateException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+	    
 	    try {
 			mp.prepare();
 		} catch (IllegalStateException e) {
@@ -63,4 +52,34 @@ public class Player extends Service {
 	    mp.start();
 				
 	}
+	
+	public void setSong(String dataPath) {
+		try {
+			mp.setDataSource(dataPath);
+		} catch (IllegalArgumentException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IllegalStateException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+	
+	//I see this being the 2 vertical line button that pauses the song in the middle, allowing the user to continue play later
+	public void pauseMusic() {
+		mp.pause();
+		
+	}
+	//I see this ending playback and returning the song to the beginning or something like that
+	public void stopMusic() {
+		mp.stop();
+	}
+	public boolean isPlaying(){
+		return mp.isPlaying();
+	}
+	
+	
 }

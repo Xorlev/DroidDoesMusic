@@ -139,7 +139,7 @@ public class Library extends ListActivity {
         SimpleCursorAdapter mAdapter = new SimpleCursorAdapter(this, layout, cur, displayColumns, display);
         
         // Set adapter of listview to the SimpleCursorAdapter 
-        setListAdapter(mAdapter);		
+        setListAdapter(mAdapter);
 	}
 	
 	public void populateDataIfReady(int view) {

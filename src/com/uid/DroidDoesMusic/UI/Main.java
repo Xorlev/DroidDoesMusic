@@ -1,6 +1,5 @@
 package com.uid.DroidDoesMusic.UI;
 
-import util.PlaylistHandler;
 import android.app.TabActivity;
 import android.content.ComponentName;
 import android.content.Context;
@@ -17,6 +16,7 @@ import android.widget.TabHost;
 
 import com.uid.DroidDoesMusic.R;
 import com.uid.DroidDoesMusic.player.Player;
+import com.uid.DroidDoesMusic.util.PlaylistHandler;
 
 public class Main extends TabActivity {      
 	protected static final String TAG = "DroidDoesMusic";
@@ -29,12 +29,7 @@ public class Main extends TabActivity {
         setContentView(R.layout.main);
         
         setupTabs();
-        
-        //Some code Joe is using to test the PlaylistHandler
-        //It will only be here if I forget to delete it.
-        //It serves no other purpose than to test code easily.
-        PlaylistHandler pl = PlaylistHandler.getPlaylistHandler();
-        
+   
         
     }
 	

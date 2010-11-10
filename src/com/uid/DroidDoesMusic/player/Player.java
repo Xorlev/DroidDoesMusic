@@ -11,16 +11,21 @@ import android.util.Log;
 import android.widget.Toast;
 
 public class Player extends Service {
-	MediaPlayer mp = new MediaPlayer();
-	public final String TAG="Player";
+	protected final String TAG = "DroidDoesMusic";
+	private final IBinder mBinder = new DataBinder();
+	private MediaPlayer mp = new MediaPlayer();
+	
+
 	public void onCreate(){
 		super.onCreate();
 		Toast.makeText(this, "Player started...", Toast.LENGTH_SHORT).show();
 	}
+	
 	@Override
 	public int onStartCommand(Intent intent, int flags, int startId){
 		return START_STICKY;
 	}
+	
 	@Override
 	public void onDestroy(){
 		super.onDestroy();
@@ -32,8 +37,7 @@ public class Player extends Service {
 			return Player.this;
 		}
 	}
-	private final IBinder mBinder = new DataBinder();
-	
+		
 	@Override
 	public IBinder onBind(Intent i){
 		Log.d(TAG,"Player service bound");
@@ -41,8 +45,6 @@ public class Player extends Service {
 	}
 	
 	public void startMusic(){
-	    
-	    
 	    try {
 			mp.prepare();
 		} catch (IllegalStateException e) {

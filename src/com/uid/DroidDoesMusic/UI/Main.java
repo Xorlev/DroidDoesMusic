@@ -26,7 +26,7 @@ public class Main extends TabActivity {
         bind();
 		super.onCreate(savedInstanceState);
         setContentView(R.layout.main);
-        
+         
         setupTabs();
    
         

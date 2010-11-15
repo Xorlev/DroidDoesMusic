@@ -18,6 +18,27 @@
         <activity android:name=".UI.Library"
                   android:label="@string/app_name">
         </activity>
+        <activity android:name=".UI.LibraryArtistView" android:label="@string/app_name">
+			<intent-filter>
+				<action android:name="android.intent.action.PICK" />
+				<category android:name="android.intent.category.DEFAULT" />
+				<data android:mimeType="vnd.android.cursor.dir/ddm.artist"/>
+			</intent-filter>
+        </activity>
+        <activity android:name=".UI.LibraryAlbumView" android:label="@string/app_name">
+			<intent-filter>
+				<action android:name="android.intent.action.PICK" />
+				<category android:name="android.intent.category.DEFAULT" />
+				<data android:mimeType="vnd.android.cursor.dir/ddm.album"/>
+			</intent-filter>
+        </activity>
+        <activity android:name=".UI.LibrarySongView" android:label="@string/app_name">
+			<intent-filter>
+				<action android:name="android.intent.action.PICK" />
+				<category android:name="android.intent.category.DEFAULT" />
+				<data android:mimeType="vnd.android.cursor.dir/ddm.track"/>
+			</intent-filter>
+        </activity>
         <activity android:name=".UI.NowPlaying"
                   android:label="@string/app_name">
         </activity>

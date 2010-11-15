@@ -10,6 +10,12 @@
 		<item>Now Playing</item>
 	</string-array>
 	
+	<string name="fastscroll_index">ABCDEFGHIJKLMNOPQRSTUVWXYZ</string>
+	
+	<string name="unknown_artist">Unknown Artist</string>
+	<string name="unknown_album">Unknown Album</string>
+	<string name="unknown_track">Unknown Track</string>
+	
 	<string name="empty">No items in list</string>
 	<string name="no_sd_card">The SD Card is not Ready.</string>
 	

@@ -88,24 +88,21 @@ public class Main extends TabActivity {
         //
         
         // Artists
-        intent = new Intent().setClass(this, Library.class);
-        intent.putExtra("view", Library.ARTIST_VIEW);
+        intent = new Intent().setClass(this, LibraryArtistView.class);
         spec = tabHost.newTabSpec("library_artists")
         			  .setIndicator(tabs[1], res.getDrawable(R.drawable.ic_tab_playlist))
                       .setContent(intent);
         tabHost.addTab(spec);
         
         // Albums
-        intent = new Intent().setClass(this, Library.class);
-        intent.putExtra("view", Library.ALBUM_VIEW);
+        intent = new Intent().setClass(this, LibraryAlbumView.class);
         spec = tabHost.newTabSpec("library_albums")
         			  .setIndicator(tabs[2], res.getDrawable(R.drawable.ic_tab_playlist))
                       .setContent(intent);
         tabHost.addTab(spec);
         
         // Songs
-        intent = new Intent().setClass(this, Library.class);
-        intent.putExtra("view", Library.SONG_VIEW);
+        intent = new Intent().setClass(this, LibrarySongView.class);
         spec = tabHost.newTabSpec("library_songs")
         			  .setIndicator(tabs[3], res.getDrawable(R.drawable.ic_tab_playlist))
                       .setContent(intent);

@@ -6,12 +6,15 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
 import android.content.res.Resources;
+import android.media.AudioManager;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.ViewGroup;
+import android.view.ViewGroup.LayoutParams;
 import android.widget.TabHost;
 import android.widget.Toast;
 
@@ -22,6 +25,7 @@ public class Main extends TabActivity {
 	protected static final String TAG = "DroidDoesMusic";
 	protected Player mPlayer;
     protected boolean isPlayerBound = false;
+	private ListenBar listenBar;
     
 	@Override
     public void onCreate(Bundle savedInstanceState) {
@@ -29,6 +33,14 @@ public class Main extends TabActivity {
 
 		super.onCreate(savedInstanceState);
         setContentView(R.layout.main);
+        
+        setVolumeControlStream(AudioManager.STREAM_MUSIC);
+        
+        listenBar = new ListenBar(this);
+        //((ViewGroup)findViewById(R.id.main_linear)).isAnimationCacheEnabled();
+        ((ViewGroup)findViewById(R.id.MediaPlayer)).addView(listenBar,
+            new ViewGroup.LayoutParams(LayoutParams.FILL_PARENT,
+                LayoutParams.WRAP_CONTENT));
         
         setupTabs();
         bind();
@@ -95,6 +107,7 @@ public class Main extends TabActivity {
         tabHost.addTab(spec);
         
         // Albums
+        //intent = new Intent().setClass(this, LibraryAlbumView.class);
         intent = new Intent().setClass(this, LibraryAlbumView.class);
         spec = tabHost.newTabSpec("library_albums")
         			  .setIndicator(tabs[2], res.getDrawable(R.drawable.ic_tab_playlist))

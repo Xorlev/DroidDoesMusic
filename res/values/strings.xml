@@ -25,4 +25,9 @@
 	<string name="lastfm">Last.FM</string>
 	<string name="lastfm_scrobble">Scrobbling</string>
 	<string name="lastfm_scrobble_summary">Enable Scrobbling to Last.FM</string>
+	
+	<string name="msg_listen_nothing">Not playing</string>
+    <string name="msg_listen_playlist">Playlist</string>
+    <string name="msg_listen_now">Listen Now</string>
+    <string name="msg_listen_later">Add to Playlist</string>
 </resources>

@@ -38,7 +38,7 @@ public class LibraryAlbumView extends ListActivity {
         
         super.onCreate(savedInstanceState);
         setContentView(R.layout.library);
-
+        
         // Get extra data from intent
         
         try {
@@ -88,10 +88,17 @@ public class LibraryAlbumView extends ListActivity {
 		
 		cur.moveToPosition(position);
 
+
+		
 		Intent i = new Intent(Intent.ACTION_PICK);
 		i.setDataAndType(Uri.EMPTY, "vnd.android.cursor.dir/ddm.track");
 		i.putExtra(LibrarySongView.INTENT_ITEM_KEY, cur.getString(1));
 		i.putExtra(LibrarySongView.INTENT_ITEM_KEY2, id);
+		i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+		
+//		View view = LibraryGroup.group.getLocalActivityManager().startActivity("SongView", i).getDecorView();
+//		LibraryGroup.group.replaceView(view);
+
 		startActivity(i);
 	}
 	
@@ -104,7 +111,7 @@ public class LibraryAlbumView extends ListActivity {
 			artist = artistName[0];
 			
 			if (artist != "") {
-				filter = Audio.Media.ARTIST_KEY + " LIKE '" + Audio.keyFor(artist) + "'";
+				filter = Audio.Media.ARTIST + " LIKE '" + artist + "'";
 			} else {
 				filter = null;
 			}

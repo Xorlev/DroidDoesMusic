@@ -72,7 +72,7 @@ public class LibraryArtistView extends ListActivity {
 		super.onListItemClick(l, v, position, id);
 		
 		cur.moveToPosition(position);
-		
+				
 		Intent i = new Intent(Intent.ACTION_PICK);
 		i.setDataAndType(Uri.EMPTY, "vnd.android.cursor.dir/ddm.album");
 		i.putExtra(LibraryAlbumView.INTENT_ITEM_KEY, cur.getString(1));

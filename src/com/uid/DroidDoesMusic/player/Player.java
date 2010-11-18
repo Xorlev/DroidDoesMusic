@@ -81,6 +81,7 @@ public class Player extends Service {
 	//I see this ending playback and returning the song to the beginning or something like that
 	public void stopMusic() {
 		mp.stop();
+		mp.reset();
 	}
 	public boolean isPlaying(){
 		return mp.isPlaying();

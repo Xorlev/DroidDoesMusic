@@ -2,15 +2,18 @@ package com.uid.DroidDoesMusic.UI;
 
 import android.app.ListActivity;
 import android.content.BroadcastReceiver;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.ServiceConnection;
 import android.content.res.Resources;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
+import android.os.IBinder;
 import android.provider.MediaStore;
 import android.provider.MediaStore.Audio;
 import android.util.Log;
@@ -21,8 +24,10 @@ import android.widget.ListView;
 import android.widget.SectionIndexer;
 import android.widget.SimpleCursorAdapter;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.uid.DroidDoesMusic.R;
+import com.uid.DroidDoesMusic.player.Player;
 
 public class LibrarySongView extends ListActivity {
 	protected static final String TAG = "DroidDoesMusic";
@@ -33,6 +38,9 @@ public class LibrarySongView extends ListActivity {
 	private String albumName = new String();
 	private long artistId;
 	private boolean populated = false;
+	
+	private boolean isPlayerBound = false;
+	private Player mPlayer;
 	
 	@Override
     public void onCreate(Bundle savedInstanceState) {
@@ -60,6 +68,7 @@ public class LibrarySongView extends ListActivity {
         getListView().setFastScrollEnabled(true);
         
         // Populate ListView
+        bind();
         populateDataIfReady();
     }
 	
@@ -93,19 +102,28 @@ public class LibrarySongView extends ListActivity {
 		
 		cur.moveToPosition(position);
 
-
+		String dataPath = cur.getString(cur.getColumnIndex(Audio.Media.DATA));
+		
+		if (isPlayerBound) {
+			mPlayer.stopMusic();
+			mPlayer.setSong(dataPath);
+			mPlayer.startMusic();
+		}
 	}
 	
 	public void getSongs(String... albumid) {
 		String album = new String();
+		long artistId;
 		String filter = new String();
 
         // Grabs content URI for a unique list of songs on the SDcard
 		try {
 			album = albumid[0];
+			artistId = Long.parseLong(albumid[1]);
 			
-			if (album != "") {
-				filter = Audio.Albums.ALBUM_KEY + " = '" + Audio.keyFor(album) + "'";
+			if (album == null || album != "") {
+				//filter = Audio.Albums.ALBUM_KEY + " = '" + Audio.keyFor(album) + "'";
+				filter = Audio.Albums.ALBUM + " LIKE '" + album + "'";
 			} else {
 				filter = null;
 			}
@@ -117,11 +135,11 @@ public class LibrarySongView extends ListActivity {
 		Uri extUri = Audio.Media.EXTERNAL_CONTENT_URI;
 
         // Columns to grab from the DB, then the expected mappings
-        String[] projection = new String[] {Audio.Artists._ID, Audio.Media.TITLE, Audio.Media.ARTIST, Audio.Media.ALBUM, Audio.Media.TRACK, Audio.Media.ALBUM_KEY};
+        String[] projection = new String[] {Audio.Artists._ID, Audio.Media.TITLE, Audio.Media.ARTIST, Audio.Media.ALBUM, Audio.Media.TRACK, Audio.Media.ALBUM_KEY, Audio.Media.DATA};
         String[] displayColumns = new String[] {Audio.Media.TITLE, Audio.Media.ARTIST};
         int[] display = new int[] { android.R.id.text1, android.R.id.text2 };
 
-        String sort = Audio.Media.ARTIST + " ASC, " + Audio.Media.ALBUM + " ASC, " + Audio.Media.TRACK + " ASC";
+        String sort = Audio.Media.TITLE + " ASC, " + Audio.Media.ALBUM + " ASC";
         
         int layout = android.R.layout.simple_list_item_2;
         
@@ -147,7 +165,7 @@ public class LibrarySongView extends ListActivity {
         	TextView tv = (TextView)findViewById(android.R.id.empty);
         	tv.setText(getResources().getString(R.string.no_sd_card));
         } else if (!populated) {
-        	getSongs(albumName);
+        	getSongs(albumName, Long.toString(artistId));
         }
 	}
 	
@@ -178,6 +196,28 @@ public class LibrarySongView extends ListActivity {
 			}, 5000);
 		}
 	}
+    private void bind() {
+    	Log.d(TAG, "bind: Attempting to bind to Player" );
+    	if (!getParent().bindService(new Intent("com.uid.DroidDoesMusic.player.Player"), mConnection, Context.BIND_AUTO_CREATE)) {
+    		Toast.makeText(this, "Failed to bind.", Toast.LENGTH_SHORT).show();
+    	}
+    }
+    
+    private ServiceConnection mConnection = new ServiceConnection() {
+    	public void onServiceConnected(ComponentName classname, IBinder service){
+    		Log.d(TAG, "onServiceConnected: Player Service Connected" + classname.toShortString());
+    		
+    		Player player = ((Player.DataBinder)service).getService();
+    		mPlayer = player;
+    		    		
+    		isPlayerBound = true;
+    	}
+    	public void onServiceDisconnected(ComponentName classname){
+    		Log.d(TAG, "onServiceDisconnected: Player Service Disconnected");
+    		
+    		isPlayerBound = false;
+    	}
+    };
 	
 	private static class SongListAdapter extends SimpleCursorAdapter implements SectionIndexer {
 		private AlphabetIndexer mIndexer;
@@ -232,7 +272,7 @@ public class LibrarySongView extends ListActivity {
 			}
 			
 			// Set view
-			vh.line1.setText(albumName);
+			vh.line1.setText(trackName);
 			vh.line2.setText(artistName + " - " + albumName);
 		}
 

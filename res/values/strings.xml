@@ -22,6 +22,11 @@
 	<string name="settings_label">Settings...</string>
 	<string name="settings_title">DDM Settings</string>
 	<string name="settings_shortcut">s</string>
+	
+	<string name="quit_label">Quit</string>
+	<string name="quit_shortcut">q</string>
+	
+	
 	<string name="lastfm">Last.FM</string>
 	<string name="lastfm_scrobble">Scrobbling</string>
 	<string name="lastfm_scrobble_summary">Enable Scrobbling to Last.FM</string>

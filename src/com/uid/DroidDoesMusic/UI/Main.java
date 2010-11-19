@@ -64,6 +64,9 @@ public class Main extends TabActivity {
     	case R.id.settings:
     		startActivity(new Intent(this, Preferences.class));
     		return true;
+		case R.id.quit:
+			finish();
+			return true;
     	}
     	return false;
     }

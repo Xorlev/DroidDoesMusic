@@ -6,6 +6,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.res.Resources;
+import android.content.res.Resources.NotFoundException;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
@@ -196,8 +197,12 @@ public class LibraryAlbumView extends ListActivity {
 			// Get resources for use later
 			mResources = context.getResources();
 			
-			// Fire up an AlphabetIndexer for ListView fastscroll
-			mIndexer = new AlphabetIndexer(c, c.getColumnIndex(Audio.Albums.ALBUM), mResources.getString(R.string.fastscroll_index));
+			try {
+				// Fire up an AlphabetIndexer for ListView fastscroll
+				mIndexer = new AlphabetIndexer(c, c.getColumnIndex(Audio.Albums.ALBUM), mResources.getString(R.string.fastscroll_index));
+			} catch (IllegalArgumentException e) {
+				
+			}
 		}
 		
 		@Override

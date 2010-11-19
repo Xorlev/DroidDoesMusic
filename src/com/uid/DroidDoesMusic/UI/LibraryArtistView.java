@@ -156,8 +156,12 @@ public class LibraryArtistView extends ListActivity {
 			// Get resources for use later
 			mResources = context.getResources();
 			
-			// Fire up an AlphabetIndexer for ListView fastscroll
-			mIndexer = new AlphabetIndexer(c, c.getColumnIndex(Audio.Artists.ARTIST), mResources.getString(R.string.fastscroll_index));
+			try {
+				// Fire up an AlphabetIndexer for ListView fastscroll
+				mIndexer = new AlphabetIndexer(c, c.getColumnIndexOrThrow(Audio.Artists.ARTIST), mResources.getString(R.string.fastscroll_index));
+			} catch (IllegalArgumentException e) {
+				
+			}
 		}
 		
 		@Override

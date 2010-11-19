@@ -37,8 +37,8 @@ public class Playlist extends ListActivity {
        ListAdapter adapter;
        Log.d("DroidDoesMusic",Audio.Playlists.EXTERNAL_CONTENT_URI.toString());
 
-        PlaylistManager pl = PlaylistManager.getInstance();
-        adapter = /*pl.*/listPlaylists(this);
+        PlaylistManager pl = PlaylistManager.getInstance(this);
+        adapter = pl.listPlaylists(this);
         
 		this.setListAdapter(adapter);
         

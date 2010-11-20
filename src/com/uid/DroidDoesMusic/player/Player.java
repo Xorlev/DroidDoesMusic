@@ -50,6 +50,13 @@ public class Player extends Service {
 		mHandler.removeCallbacksAndMessages(null);
 		mNotificationManager.cancelAll();
 		mp.release();
+		
+		if (lastUpdateBroadcast != null) {
+			getApplicationContext().removeStickyBroadcast(lastUpdateBroadcast);
+		}
+		if (lastChangeBroadcast != null) {
+			getApplicationContext().removeStickyBroadcast(lastChangeBroadcast);
+		}
 	}
 	
 	public class DataBinder extends Binder {
@@ -114,6 +121,10 @@ public class Player extends Service {
 		mp.reset();
 	}
 	
+	public void seek(int position) {
+		mp.seekTo(position);
+	}
+	
 	public boolean isSongStarted() {
 		return isSongStarted;
 	}
@@ -128,23 +139,24 @@ public class Player extends Service {
 				getApplicationContext().removeStickyBroadcast(lastUpdateBroadcast);
 			}
 			
+			
 			lastUpdateBroadcast = new Intent(SERVICE_UPDATE_NAME);
 			lastUpdateBroadcast.putExtra("duration", mp.getDuration());
 			lastUpdateBroadcast.putExtra("position", mp.getCurrentPosition());
 			getApplicationContext().sendStickyBroadcast(lastUpdateBroadcast);
 		}
 	}
-	
+
 	private void changeNotify() {
-	    if (lastChangeBroadcast != null) {
-	        getApplicationContext().removeStickyBroadcast(lastChangeBroadcast);
-	      }
-	      lastChangeBroadcast = new Intent(SERVICE_CHANGE_NAME);
-	      lastChangeBroadcast.putExtra("artist", artist);
-	      lastChangeBroadcast.putExtra("title", title);
-	      getApplicationContext().sendStickyBroadcast(lastChangeBroadcast);
+		if (lastChangeBroadcast != null) {
+			getApplicationContext().removeStickyBroadcast(lastChangeBroadcast);
+		}
+		lastChangeBroadcast = new Intent(SERVICE_CHANGE_NAME);
+		lastChangeBroadcast.putExtra("artist", artist);
+		lastChangeBroadcast.putExtra("title", title);
+		getApplicationContext().sendStickyBroadcast(lastChangeBroadcast);
 	}
-	
+
 	private void spawnNotification() {
 		CharSequence contentTitle = getString(com.uid.DroidDoesMusic.R.string.app_name);
 		String contentText = artist + " - " + title;
@@ -153,10 +165,7 @@ public class Player extends Service {
 		notification.flags = Notification.FLAG_NO_CLEAR
 				| Notification.FLAG_ONGOING_EVENT;
 		Context c = getApplicationContext();
-		Intent notificationIntent = new Intent("com.uid.DroidDoesMusic.UI.Main");
-//		notificationIntent.setAction(Intent.ACTION_MAIN);
-//		notificationIntent.addCategory(Intent.CATEGORY_DEFAULT);
-//		notificationIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+		Intent notificationIntent = new Intent(this, com.uid.DroidDoesMusic.UI.Main.class);
 		PendingIntent contentIntent = PendingIntent.getActivity(c, 0, notificationIntent, PendingIntent.FLAG_CANCEL_CURRENT);
 		notification.setLatestEventInfo(c, contentTitle, contentText, contentIntent);
 		mNotificationManager.notify(1, notification);

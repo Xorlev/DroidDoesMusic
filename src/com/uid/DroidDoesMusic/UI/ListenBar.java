@@ -75,6 +75,7 @@ public class ListenBar extends FrameLayout implements OnClickListener, OnDrawerO
 		getContext().unregisterReceiver(trackChangeReceiver);
 		getContext().unregisterReceiver(trackUpdateReceiver);
 		getContext().unregisterReceiver(trackStopReceiver);
+		getContext().getApplicationContext().unbindService(mConnection);
 	}
 	
 	private void resetView() {
@@ -151,7 +152,9 @@ public class ListenBar extends FrameLayout implements OnClickListener, OnDrawerO
 		    next.setEnabled(true);
 		    seek.setEnabled(true);
 		    
-		    play.setImageResource(android.R.drawable.ic_media_pause);
+		    if (mPlayer.isPlaying()) {
+		    	play.setImageResource(android.R.drawable.ic_media_pause);
+		    }
 		    
 		    String artist = intent.getExtras().getString("artist");
 		    String title = intent.getExtras().getString("title");
@@ -183,10 +186,14 @@ public class ListenBar extends FrameLayout implements OnClickListener, OnDrawerO
 		}
 	};
 
-	public void onProgressChanged(SeekBar seekBar, int progress,
-			boolean fromUser) {
-		// TODO Auto-generated method stub
-		
+	public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+		if (fromUser) {
+			if (progress <= seekBar.getMax()) {
+				mPlayer.seek(progress);
+			} else {
+				mPlayer.seek(seekBar.getMax());
+			}
+		}
 	}
 
 	public void onStartTrackingTouch(SeekBar seekBar) {

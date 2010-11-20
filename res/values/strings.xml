@@ -19,7 +19,7 @@
 	<string name="empty">No items in list</string>
 	<string name="no_sd_card">The SD Card is not Ready.</string>
 	
-	<string name="settings_label">Settings...</string>
+	<string name="settings_label">Settings</string>
 	<string name="settings_title">DDM Settings</string>
 	<string name="settings_shortcut">s</string>
 	
@@ -31,7 +31,7 @@
 	<string name="lastfm_scrobble">Scrobbling</string>
 	<string name="lastfm_scrobble_summary">Enable Scrobbling to Last.FM</string>
 	
-	<string name="msg_listen_nothing">Not playing</string>
+	<string name="msg_listen_nothing">Not Playing</string>
     <string name="msg_listen_playlist">Playlist</string>
     <string name="msg_listen_now">Listen Now</string>
     <string name="msg_listen_later">Add to Playlist</string>

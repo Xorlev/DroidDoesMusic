@@ -38,12 +38,12 @@
       <SeekBar
         android:id="@+id/StreamProgressBar"
         android:layout_height="wrap_content"
-        android:max="100"
+        android:max="1000"
         android:layout_gravity="center"
-        android:layout_width="wrap_content"
-        android:layout_marginLeft="5dip" android:layout_weight="1.0" android:paddingLeft="20dip"></SeekBar>
+        android:layout_width="fill_parent"
+        android:layout_marginLeft="3dip" android:layout_weight="1" ></SeekBar>
       <TextView
-        android:text="TextView01"
+        android:text="saldhlaskd"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/StreamLengthText"

@@ -6,7 +6,8 @@
     <application android:icon="@drawable/icon" android:label="@string/app_name" android:debuggable="true">
     	<activity android:name=".UI.Main"
     			  android:label="@string/app_name"
-    			  android:theme="@android:style/Theme.NoTitleBar">
+    			  android:theme="@android:style/Theme.NoTitleBar"
+    			  android:launchMode="singleTask">
     		<intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
@@ -52,5 +53,6 @@
 		</service>
     </application>
     <uses-sdk android:minSdkVersion="7" />
+    <uses-permission android:name="android.permission.BROADCAST_STICKY"></uses-permission>
 
 </manifest> 

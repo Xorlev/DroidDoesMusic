@@ -103,11 +103,13 @@ public class LibrarySongView extends ListActivity {
 		
 		cur.moveToPosition(position);
 
+		String artist = cur.getString(cur.getColumnIndex(Audio.Media.ARTIST));
+		String title = cur.getString(cur.getColumnIndex(Audio.Media.TITLE));
 		String dataPath = cur.getString(cur.getColumnIndex(Audio.Media.DATA));
 		
 		if (isPlayerBound) {
 			mPlayer.stopMusic();
-			mPlayer.setSong(dataPath);
+			mPlayer.setSong(artist, title, dataPath);
 			mPlayer.startMusic();
 		}
 	}

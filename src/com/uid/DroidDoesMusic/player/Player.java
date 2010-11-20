@@ -47,6 +47,8 @@ public class Player extends Service {
 	@Override
 	public void onDestroy(){
 		super.onDestroy();
+		mHandler.removeCallbacksAndMessages(null);
+		mNotificationManager.cancelAll();
 		mp.release();
 	}
 	
@@ -120,6 +122,29 @@ public class Player extends Service {
 		return mp.isPlaying();
 	}
 	
+	private void updateProgress() {
+		if (mp != null && mp.isPlaying()) {
+			if (lastUpdateBroadcast != null) {
+				getApplicationContext().removeStickyBroadcast(lastUpdateBroadcast);
+			}
+			
+			lastUpdateBroadcast = new Intent(SERVICE_UPDATE_NAME);
+			lastUpdateBroadcast.putExtra("duration", mp.getDuration());
+			lastUpdateBroadcast.putExtra("position", mp.getCurrentPosition());
+			getApplicationContext().sendStickyBroadcast(lastUpdateBroadcast);
+		}
+	}
+	
+	private void changeNotify() {
+	    if (lastChangeBroadcast != null) {
+	        getApplicationContext().removeStickyBroadcast(lastChangeBroadcast);
+	      }
+	      lastChangeBroadcast = new Intent(SERVICE_CHANGE_NAME);
+	      lastChangeBroadcast.putExtra("artist", artist);
+	      lastChangeBroadcast.putExtra("title", title);
+	      getApplicationContext().sendStickyBroadcast(lastChangeBroadcast);
+	}
+	
 	private void spawnNotification() {
 		CharSequence contentTitle = getString(com.uid.DroidDoesMusic.R.string.app_name);
 		String contentText = artist + " - " + title;
@@ -137,16 +162,6 @@ public class Player extends Service {
 		mNotificationManager.notify(1, notification);
 	}
 	
-	private void changeNotify() {
-	    if (lastChangeBroadcast != null) {
-	        getApplicationContext().removeStickyBroadcast(lastChangeBroadcast);
-	      }
-	      lastChangeBroadcast = new Intent(SERVICE_CHANGE_NAME);
-	      lastChangeBroadcast.putExtra("artist", artist);
-	      lastChangeBroadcast.putExtra("title", title);
-	      getApplicationContext().sendStickyBroadcast(lastChangeBroadcast);
-	}
-	
 	private Runnable mUpdateProgressTimeTask = new Runnable() {
 		public void run() {
 			updateProgress();
@@ -154,16 +169,5 @@ public class Player extends Service {
 		}
 	};
 	
-	private void updateProgress() {
-		if (mp != null && mp.isPlaying()) {
-			if (lastUpdateBroadcast != null) {
-				getApplicationContext().removeStickyBroadcast(lastUpdateBroadcast);
-			}
-			
-			lastUpdateBroadcast = new Intent(SERVICE_UPDATE_NAME);
-			lastUpdateBroadcast.putExtra("duration", mp.getDuration());
-			lastUpdateBroadcast.putExtra("position", mp.getCurrentPosition());
-			getApplicationContext().sendStickyBroadcast(lastUpdateBroadcast);
-		}
-	}
+
 }

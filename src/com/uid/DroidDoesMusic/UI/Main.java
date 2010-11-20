@@ -34,6 +34,7 @@ public class Main extends TabActivity {
 		super.onCreate(savedInstanceState);
         setContentView(R.layout.main);
         
+        startService(new Intent("com.uid.DroidDoesMusic.player.Player"));
         setVolumeControlStream(AudioManager.STREAM_MUSIC);
         
         listenBar = new ListenBar(this);
@@ -65,6 +66,7 @@ public class Main extends TabActivity {
     		startActivity(new Intent(this, Preferences.class));
     		return true;
 		case R.id.quit:
+			stopService(new Intent("com.uid.DroidDoesMusic.player.Player"));
 			finish();
 			return true;
     	}

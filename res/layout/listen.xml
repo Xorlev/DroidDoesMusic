@@ -39,7 +39,7 @@
         android:id="@+id/StreamProgressBar"
         android:layout_height="wrap_content"
         android:max="100"
-        android:layout_gravity="center_vertical"
+        android:layout_gravity="center"
         android:layout_width="wrap_content"
         android:layout_marginLeft="5dip" android:layout_weight="1.0" android:paddingLeft="20dip"></SeekBar>
       <TextView
@@ -57,21 +57,23 @@
       android:orientation="horizontal"
       android:gravity="center_horizontal">
       <ImageButton
+        android:id="@+id/StreamPrevButton"
+        android:layout_width="wrap_content"
+        android:layout_marginRight="10dip"
+        android:src="@android:drawable/ic_media_previous"
+        android:scaleType="centerInside"
+        android:layout_height="48dip" />
+      <ImageButton
         android:id="@+id/StreamPlayButton"
         android:layout_width="wrap_content"
         android:src="@android:drawable/ic_media_play"
         android:scaleType="centerInside"
         android:layout_height="48dip" />
-      <Button
-        android:id="@+id/StreamPlaylistButton"
-        android:text="@string/msg_listen_playlist"
-        android:layout_width="wrap_content"
-        android:layout_height="48dip"></Button>
       <ImageButton
-        android:id="@+id/StreamShareButton"
+        android:id="@+id/StreamNextButton"
         android:layout_width="wrap_content"
         android:layout_marginLeft="10dip"
-        android:src="@android:drawable/ic_menu_share"
+        android:src="@android:drawable/ic_media_next"
         android:scaleType="centerInside"
         android:layout_height="48dip" />
     </LinearLayout>

@@ -29,6 +29,7 @@ public class Player extends Service {
 	@Override
 	public void onDestroy(){
 		super.onDestroy();
+		mp.release();
 		Toast.makeText(this, "Player destroyed...", Toast.LENGTH_SHORT).show();
 	}
 	

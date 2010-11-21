@@ -1,13 +1,15 @@
 package com.uid.DroidDoesMusic.UI;
 
+import java.util.HashMap;
+
 import android.app.ListActivity;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.res.Resources;
-import android.content.res.Resources.NotFoundException;
 import android.database.Cursor;
+import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
@@ -18,6 +20,7 @@ import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AlphabetIndexer;
+import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.SectionIndexer;
 import android.widget.SimpleCursorAdapter;
@@ -97,7 +100,7 @@ public class LibraryAlbumView extends ListActivity {
 		Intent i = new Intent(Intent.ACTION_PICK);
 		i.setDataAndType(Uri.EMPTY, "vnd.android.cursor.dir/ddm.track");
 		i.putExtra(LibrarySongView.INTENT_ITEM_KEY, cur.getString(1));
-		i.putExtra(LibrarySongView.INTENT_ITEM_KEY2, (Integer)v.getTag(R.id.artist_id));
+		i.putExtra(LibrarySongView.INTENT_ITEM_KEY2, (Long)v.getTag(R.id.artist_id));
 		i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
 		
 //		View view = LibraryGroup.group.getLocalActivityManager().startActivity("SongView", i).getDecorView();
@@ -134,7 +137,7 @@ public class LibraryAlbumView extends ListActivity {
 
         String sort = Audio.Media.ARTIST + " ASC, " + Audio.Albums.ALBUM + " ASC";
         
-        int layout = android.R.layout.simple_list_item_2;
+        int layout = R.layout.album;
         
         getData(extUri, projection, filter, displayColumns, display, sort, layout);
 	}
@@ -203,6 +206,7 @@ public class LibraryAlbumView extends ListActivity {
 	private static class AlbumListAdapter extends SimpleCursorAdapter implements SectionIndexer {
 		private AlphabetIndexer mIndexer;
 		private final Resources mResources;
+		private static final HashMap<Long, Drawable> artCache = new HashMap<Long, Drawable>();
 		
 		public AlbumListAdapter(Context context, int layout, Cursor c, String[] from, int[] to) {
 			super(context, layout, c, from, to);
@@ -228,8 +232,9 @@ public class LibraryAlbumView extends ListActivity {
 			ViewHolder vh = new ViewHolder();
 			
 			// Set views into container
-			vh.line1 = (TextView)v.findViewById(android.R.id.text1);
-			vh.line2 = (TextView)v.findViewById(android.R.id.text2);
+			vh.icon = (ImageView)v.findViewById(R.id.icon);
+			vh.line1 = (TextView)v.findViewById(R.id.text1);
+			vh.line2 = (TextView)v.findViewById(R.id.text2);
 			
 			// 'tag' the view with the ViewHolder for use by bindView
 			v.setTag(vh);
@@ -239,6 +244,24 @@ public class LibraryAlbumView extends ListActivity {
 		@Override
 		public void bindView(View view, Context context, Cursor c) {
 			ViewHolder vh = (ViewHolder)view.getTag();
+			
+			// Album ID
+			long albumId = c.getLong(c.getColumnIndex(Audio.Albums._ID));
+			
+			// Get album icon
+			Drawable d;
+			String art = c.getString(c.getColumnIndex(MediaStore.Audio.Albums.ALBUM_ART));
+			if (art == null || art.length() == 0) {
+				d = mResources.getDrawable(R.drawable.icon);
+			} else {
+				if (artCache.containsKey(albumId)) {
+					d = artCache.get(albumId);
+				} else {
+					d = Drawable.createFromPath(art);
+					artCache.put(albumId, d);
+				}
+			}
+			d.setDither(false);
 			
 			// Get artist name, set "unknown" if missing
 			String artistName = c.getString(c.getColumnIndex(Audio.Albums.ARTIST));
@@ -252,9 +275,11 @@ public class LibraryAlbumView extends ListActivity {
 				albumName = mResources.getString(R.string.unknown_album);
 			}
 			
-			view.setTag(R.id.artist_id, c.getInt(c.getColumnIndex(Audio.Media.ARTIST_ID)));
+			view.setTag(R.id.artist_id, c.getLong(c.getColumnIndex(Audio.Media.ARTIST_ID)));
 			
 			// Set view
+			vh.icon.setImageDrawable(d);
+			vh.icon.setPadding(0, 0, 1, 0);
 			vh.line1.setText(albumName);
 			vh.line2.setText(artistName);
 		}
@@ -272,6 +297,7 @@ public class LibraryAlbumView extends ListActivity {
 		}
 		
 		private static class ViewHolder {
+			ImageView icon;
 			TextView line1;
 			TextView line2;
 		}

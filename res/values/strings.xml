@@ -27,10 +27,10 @@
 	<string name="quit_shortcut">q</string>
 	
 	
-	<string name="lastfm">Last.FM</string>
+	<string name="lastfm">Last.fm</string>
 	<string name="lastfm_scrobble">Scrobbling</string>
-	<string name="lastfm_scrobble_summary">Enable Scrobbling to Last.FM</string>
-	<string name="lastfm_scrobble_app_required">\n+This requires the offical Last.FM Android App</string>
+	<string name="lastfm_scrobble_summary">Enable Scrobbling to Last.fm</string>
+	<string name="lastfm_scrobble_app_required">\n+This requires the offical Last.fm Android App</string>
 	
 	<string name="msg_listen_nothing">Not Playing</string>
     <string name="msg_listen_playlist">Playlist</string>

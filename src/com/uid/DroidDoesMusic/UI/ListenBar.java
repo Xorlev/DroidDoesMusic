@@ -70,12 +70,14 @@ public class ListenBar extends FrameLayout implements OnClickListener, OnDrawerO
 
 	@Override
 	protected void onDetachedFromWindow() {
+		Log.d(TAG, "ListenBar: Window Detached");
+		
 		super.onDetachedFromWindow();
 
 		getContext().unregisterReceiver(trackChangeReceiver);
 		getContext().unregisterReceiver(trackUpdateReceiver);
 		getContext().unregisterReceiver(trackStopReceiver);
-		getContext().getApplicationContext().unbindService(mConnection);
+		resetView();
 	}
 	
 	private void resetView() {

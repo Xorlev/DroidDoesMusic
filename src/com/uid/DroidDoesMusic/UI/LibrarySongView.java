@@ -36,6 +36,7 @@ public class LibrarySongView extends ListActivity {
 	protected static final String TAG = "DroidDoesMusic";
 	public static final String INTENT_ITEM_KEY = "albumName";
 	public static final String INTENT_ITEM_KEY2 = "artistId";
+	public static final String INTENT_ITEM_KEY3 = "artistName";
 	
 	private Cursor cur;
 	private String albumName = new String();
@@ -118,12 +119,13 @@ public class LibrarySongView extends ListActivity {
 		cur.moveToPosition(position);
 
 		String artist = cur.getString(cur.getColumnIndex(Audio.Media.ARTIST));
+		String album = cur.getString(cur.getColumnIndex(Audio.Media.ALBUM));
 		String title = cur.getString(cur.getColumnIndex(Audio.Media.TITLE));
 		String dataPath = cur.getString(cur.getColumnIndex(Audio.Media.DATA));
 		
 		if (isPlayerBound) {
 			mPlayer.stopMusic();
-			mPlayer.setSong(artist, title, dataPath);
+			mPlayer.setSong(artist, album, title, dataPath);
 			mPlayer.startMusic();
 		}
 	}
@@ -140,7 +142,7 @@ public class LibrarySongView extends ListActivity {
 			
 			if (album == null || album != "") {
 				//filter = Audio.Albums.ALBUM_KEY + " = '" + Audio.keyFor(album) + "'";
-				filter = Audio.Albums.ALBUM + " LIKE '" + album + "'";
+				filter = Audio.Albums.ALBUM + " LIKE '" + album + "' OR " + Audio.Media.ARTIST_ID + " = '" + artistId + "'";
 			} else {
 				filter = null;
 			}

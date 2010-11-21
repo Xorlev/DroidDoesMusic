@@ -8,13 +8,16 @@ import android.app.PendingIntent;
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.media.MediaPlayer;
+import android.media.MediaPlayer.OnCompletionListener;
 import android.os.Binder;
 import android.os.Handler;
 import android.os.IBinder;
+import android.preference.PreferenceManager;
 import android.util.Log;
 
-public class Player extends Service {
+public class Player extends Service implements OnCompletionListener {
 	protected final String TAG = "DroidDoesMusic";
 	private static final String SERVICE_PREFIX = "com.uid.DroidDoesMusic.player.";
 	public static final String SERVICE_CHANGE_NAME = SERVICE_PREFIX + "CHANGE";
@@ -26,17 +29,20 @@ public class Player extends Service {
 	private Handler mHandler = new Handler();
 	
 	private boolean isSongStarted = false;
-	String artist;
-	String title;
+	private String artist;
+	private String album;
+	private String title;
 	
 	private Intent lastChangeBroadcast;
 	private Intent lastUpdateBroadcast;
 	
 	private NotificationManager mNotificationManager;
+	private LastfmBroadcaster lbm = new LastfmBroadcaster(this);
 
 	public void onCreate(){
 		super.onCreate();
 		mNotificationManager = (NotificationManager)getSystemService(NOTIFICATION_SERVICE);
+		mp.setOnCompletionListener(this);
 	}
 	
 	@Override
@@ -57,6 +63,12 @@ public class Player extends Service {
 		if (lastChangeBroadcast != null) {
 			getApplicationContext().removeStickyBroadcast(lastChangeBroadcast);
 		}
+		
+	}
+	
+	public void onCompletion(MediaPlayer mp) {
+		lbm.playbackcomplete();
+		stopMusic();	
 	}
 	
 	public class DataBinder extends Binder {
@@ -71,25 +83,10 @@ public class Player extends Service {
 		return mBinder;	
 	}
 	
-	public void startMusic(){
-	    try {
-			mp.prepare();
-		} catch (IllegalStateException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-	    mp.start();
-		isSongStarted = true;
-		spawnNotification();
-		mHandler.postDelayed(mUpdateProgressTimeTask, 500);
-	}
-	
-	public void setSong(String artist, String title, String dataPath) {
+	public void setSong(String artist, String album, String title, String dataPath) {
 		try {
 			this.artist = artist;
+			this.album = album;
 			this.title = title;
 			mp.setDataSource(dataPath);
 			changeNotify();
@@ -104,14 +101,33 @@ public class Player extends Service {
 			e.printStackTrace();
 		}
 	}
+
+	public void startMusic(){
+	    try {
+			mp.prepare();
+		} catch (IllegalStateException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+	    mp.start();
+		isSongStarted = true;
+		spawnNotification();
+		mHandler.postDelayed(mUpdateProgressTimeTask, 500);
+		lbm.startTrack(artist, album, title, mp.getDuration());
+	}
 	
 	//I see this being the 2 vertical line button that pauses the song in the middle, allowing the user to continue play later
 	public void pauseMusic() {
 		mNotificationManager.cancel(1);
 		mHandler.removeCallbacks(mUpdateProgressTimeTask);
 		mp.pause();
-		
+		lbm.playbackPaused();
 	}
+	
 	//I see this ending playback and returning the song to the beginning or something like that
 	public void stopMusic() {
 		isSongStarted = false;
@@ -119,6 +135,7 @@ public class Player extends Service {
 		mHandler.removeCallbacks(mUpdateProgressTimeTask);
 		mp.stop();
 		mp.reset();
+		stopNotify();
 	}
 	
 	public void seek(int position) {
@@ -139,7 +156,6 @@ public class Player extends Service {
 				getApplicationContext().removeStickyBroadcast(lastUpdateBroadcast);
 			}
 			
-			
 			lastUpdateBroadcast = new Intent(SERVICE_UPDATE_NAME);
 			lastUpdateBroadcast.putExtra("duration", mp.getDuration());
 			lastUpdateBroadcast.putExtra("position", mp.getCurrentPosition());
@@ -153,8 +169,13 @@ public class Player extends Service {
 		}
 		lastChangeBroadcast = new Intent(SERVICE_CHANGE_NAME);
 		lastChangeBroadcast.putExtra("artist", artist);
+		lastChangeBroadcast.putExtra("album", album);
 		lastChangeBroadcast.putExtra("title", title);
 		getApplicationContext().sendStickyBroadcast(lastChangeBroadcast);
+	}
+	
+	private void stopNotify() {
+		getApplicationContext().sendBroadcast(new Intent(SERVICE_STOP_NAME));
 	}
 
 	private void spawnNotification() {
@@ -178,5 +199,36 @@ public class Player extends Service {
 		}
 	};
 	
-
+	private static class LastfmBroadcaster {
+		Context context;
+		//SharedPreferences sp; 
+		public LastfmBroadcaster(Context context) {
+			this.context = context;
+			//context.getApplicationContext()
+			//sp = PreferenceManager.getDefaultSharedPreferences(context.getApplicationContext());
+		}
+		
+		public final void startTrack(String artist, String album, String track, int duration) {
+			//if (sp.getBoolean("lastfm_scrobble", false)) {
+				Intent i = new Intent("fm.last.android.metachanged");
+				i.putExtra("artist", artist);
+				i.putExtra("album", album);
+				i.putExtra("track", track);
+				i.putExtra("duration", duration);
+				context.sendBroadcast(i);
+			//}
+		}
+		
+		public final void playbackPaused() {
+			//if (sp.getBoolean("lastfm_scrobble", false)) {
+				context.sendBroadcast(new Intent("fm.last.android.playbackpaused"));
+			//}
+		}
+		
+		public final void playbackcomplete() {
+			//if (sp.getBoolean("lastfm_scrobble", false)) {
+				context.sendBroadcast(new Intent("fm.last.android.playbackcomplete"));
+			//}
+		}
+	}
 }

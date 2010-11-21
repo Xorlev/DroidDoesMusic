@@ -24,25 +24,28 @@ public class Preferences extends PreferenceActivity {
 		
 		addPreferencesFromResource(R.xml.settings);
 		
-		checkLastFM();
+		checkLastFm();
 	}
 	
-	public void checkLastFM() {
-		final boolean lastFMAvailable = isIntentAvailable(this, "fm.last.android.metachanged");
+	public void checkLastFm() {
+		final boolean lastFmAvailable = isLastFmInstalled();
 		
-		if (!lastFMAvailable) {
+		if (!lastFmAvailable) {
 			Preference lastfm_scrobble = findPreference("lastfm_scrobble");
 			lastfm_scrobble.setEnabled(false);
 			lastfm_scrobble.setSummary(lastfm_scrobble.getSummary() + getResources().getString(R.string.lastfm_scrobble_app_required));
 		}
 	}
 	
-	public static boolean isIntentAvailable(Context context, String action) {
-	    final PackageManager packageManager = context.getPackageManager();
-	    final Intent intent = new Intent(action);
-	    List<ResolveInfo> list =
-	            packageManager.queryIntentActivities(intent,
-	                    PackageManager.MATCH_DEFAULT_ONLY);
-	    return list.size() > 0;
+	private boolean isLastFmInstalled() {
+		PackageManager pm = getPackageManager();
+		boolean result = false;
+		try {
+			pm.getPackageInfo("fm.last.android", PackageManager.GET_ACTIVITIES);
+			result = true;
+		} catch (Exception e) {
+			result = false;
+		}
+		return result;
 	}
 }

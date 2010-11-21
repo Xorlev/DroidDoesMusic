@@ -38,7 +38,6 @@ public class Main extends TabActivity {
         setVolumeControlStream(AudioManager.STREAM_MUSIC);
         
         listenBar = new ListenBar(this);
-        //((ViewGroup)findViewById(R.id.main_linear)).isAnimationCacheEnabled();
         ((ViewGroup)findViewById(R.id.MediaPlayer)).addView(listenBar,
             new ViewGroup.LayoutParams(LayoutParams.FILL_PARENT,
                 LayoutParams.WRAP_CONTENT));

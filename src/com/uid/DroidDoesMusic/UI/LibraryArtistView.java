@@ -75,7 +75,8 @@ public class LibraryArtistView extends ListActivity {
 				
 		Intent i = new Intent(Intent.ACTION_PICK);
 		i.setDataAndType(Uri.EMPTY, "vnd.android.cursor.dir/ddm.album");
-		i.putExtra(LibraryAlbumView.INTENT_ITEM_KEY, cur.getString(1));
+		i.putExtra(LibraryAlbumView.INTENT_ITEM_KEY, cur.getInt(cur.getColumnIndex(Audio.Artists.ARTIST)));
+		i.putExtra(LibraryAlbumView.INTENT_ITEM_KEY2, cur.getInt(cur.getColumnIndex(Audio.Artists._ID)));
 		startActivity(i);
 	}
 	
@@ -160,7 +161,9 @@ public class LibraryArtistView extends ListActivity {
 				// Fire up an AlphabetIndexer for ListView fastscroll
 				mIndexer = new AlphabetIndexer(c, c.getColumnIndexOrThrow(Audio.Artists.ARTIST), mResources.getString(R.string.fastscroll_index));
 			} catch (IllegalArgumentException e) {
-				
+				e.printStackTrace();
+			} catch (NullPointerException e) {
+				e.printStackTrace();
 			}
 		}
 		

@@ -28,9 +28,11 @@ import com.uid.DroidDoesMusic.R;
 public class LibraryAlbumView extends ListActivity {
 	protected static final String TAG = "DroidDoesMusic";
 	public static final String INTENT_ITEM_KEY = "artistName";
+	public static final String INTENT_ITEM_KEY2 = "artistId";
 	
 	private Cursor cur;
 	private String artistName = new String();
+	private int artistId;
 	private boolean populated = false;
 	
 	@Override
@@ -44,6 +46,7 @@ public class LibraryAlbumView extends ListActivity {
         
         try {
 	        artistName = getIntent().getExtras().getString(INTENT_ITEM_KEY);
+	        artistId = getIntent().getExtras().getInt(INTENT_ITEM_KEY2);
 	        setTitle(artistName);
 	        
 	        if (artistName == null) {
@@ -94,7 +97,7 @@ public class LibraryAlbumView extends ListActivity {
 		Intent i = new Intent(Intent.ACTION_PICK);
 		i.setDataAndType(Uri.EMPTY, "vnd.android.cursor.dir/ddm.track");
 		i.putExtra(LibrarySongView.INTENT_ITEM_KEY, cur.getString(1));
-		i.putExtra(LibrarySongView.INTENT_ITEM_KEY2, id);
+		i.putExtra(LibrarySongView.INTENT_ITEM_KEY2, (Integer)v.getTag(R.id.artist_id));
 		i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
 		
 //		View view = LibraryGroup.group.getLocalActivityManager().startActivity("SongView", i).getDecorView();
@@ -103,28 +106,28 @@ public class LibraryAlbumView extends ListActivity {
 		startActivity(i);
 	}
 	
-	public void getAlbums(String... artistName) {
-		String artist = new String();
+	public void getAlbums(int... artistId) {
+		int artist;
 		String filter = new String();
 		
         // Grabs content URI for a unique list of albums on the SDcard
 		try {
-			artist = artistName[0];
+			artist = artistId[0];
 			
-			if (artist != "") {
-				filter = Audio.Media.ARTIST + " LIKE '" + artist + "'";
+			if (artist > 0) {
+				filter = Audio.Media.ARTIST_ID + " = '" + artist + "'";
 			} else {
 				filter = null;
 			}
 		} catch (ArrayIndexOutOfBoundsException e) {
-			artist = "";
+			artist = 0;
 			filter = null;
 		}
 		
 		Uri extUri = Audio.Albums.EXTERNAL_CONTENT_URI;
 
         // Columns to grab from the DB, then the expected mappings
-        String[] projection = new String[] {Audio.Albums._ID, Audio.Albums.ALBUM, Audio.Albums.ARTIST, Audio.Albums.ALBUM_ART};
+        String[] projection = new String[] {Audio.Albums._ID, Audio.Albums.ALBUM, Audio.Media.ARTIST_ID, Audio.Albums.ARTIST, Audio.Albums.ALBUM_ART};
 
         String[] displayColumns = new String[] {Audio.Albums.ALBUM, Audio.Albums.ARTIST};
         int[] display = new int[] { android.R.id.text1, android.R.id.text2 };
@@ -143,6 +146,16 @@ public class LibraryAlbumView extends ListActivity {
         // Activity-managed cursor to get sorted list of artists
         cur = managedQuery(datauri, projection, filter, null, sort);
         
+        // Check if cursor is empty
+        if (cur.getCount() < 1) {
+    		Intent i = new Intent(Intent.ACTION_PICK);
+    		i.setDataAndType(Uri.EMPTY, "vnd.android.cursor.dir/ddm.track");
+    		i.putExtra(LibrarySongView.INTENT_ITEM_KEY, "");
+    		i.putExtra(LibrarySongView.INTENT_ITEM_KEY2, artistId);
+    		i.putExtra(LibrarySongView.INTENT_ITEM_KEY3, artistName);
+    		i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        }
+        
         // SimpleCursorAdapter maps the cursor columns to simplelistitems
         AlbumListAdapter mAdapter = new AlbumListAdapter(this, layout, cur, displayColumns, display);
         
@@ -155,7 +168,7 @@ public class LibraryAlbumView extends ListActivity {
         	TextView tv = (TextView)findViewById(android.R.id.empty);
         	tv.setText(getResources().getString(R.string.no_sd_card));
         } else if (!populated) {
-        	getAlbums(artistName);
+        	getAlbums(artistId);
         }
 	}
 	
@@ -201,7 +214,9 @@ public class LibraryAlbumView extends ListActivity {
 				// Fire up an AlphabetIndexer for ListView fastscroll
 				mIndexer = new AlphabetIndexer(c, c.getColumnIndex(Audio.Albums.ALBUM), mResources.getString(R.string.fastscroll_index));
 			} catch (IllegalArgumentException e) {
-				
+				e.printStackTrace();
+			} catch (NullPointerException e) {
+				e.printStackTrace();
 			}
 		}
 		
@@ -236,6 +251,8 @@ public class LibraryAlbumView extends ListActivity {
 			if (albumName == null || albumName.equals(MediaStore.UNKNOWN_STRING)) {
 				albumName = mResources.getString(R.string.unknown_album);
 			}
+			
+			view.setTag(R.id.artist_id, c.getInt(c.getColumnIndex(Audio.Media.ARTIST_ID)));
 			
 			// Set view
 			vh.line1.setText(albumName);

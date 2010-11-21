@@ -25,7 +25,7 @@ public class Main extends TabActivity {
 	protected static final String TAG = "DroidDoesMusic";
 	protected Player mPlayer;
     protected boolean isPlayerBound = false;
-	private ListenBar listenBar;
+	private ControlView listenBar;
     
 	@Override
     public void onCreate(Bundle savedInstanceState) {
@@ -37,7 +37,7 @@ public class Main extends TabActivity {
         startService(new Intent("com.uid.DroidDoesMusic.player.Player"));
         setVolumeControlStream(AudioManager.STREAM_MUSIC);
         
-        listenBar = new ListenBar(this);
+        listenBar = new ControlView(this);
         ((ViewGroup)findViewById(R.id.MediaPlayer)).addView(listenBar,
             new ViewGroup.LayoutParams(LayoutParams.FILL_PARENT,
                 LayoutParams.WRAP_CONTENT));

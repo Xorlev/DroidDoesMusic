@@ -24,7 +24,7 @@ import android.widget.SlidingDrawer.OnDrawerOpenListener;
 import com.uid.DroidDoesMusic.R;
 import com.uid.DroidDoesMusic.player.Player;
 
-public class ListenBar extends FrameLayout implements OnClickListener, OnDrawerOpenListener, OnDrawerCloseListener, OnSeekBarChangeListener {
+public class ControlView extends FrameLayout implements OnClickListener, OnDrawerOpenListener, OnDrawerCloseListener, OnSeekBarChangeListener {
 	protected static final String TAG = "DroidDoesMusic";
 	
 	protected Player mPlayer;
@@ -35,8 +35,9 @@ public class ListenBar extends FrameLayout implements OnClickListener, OnDrawerO
     private ImageButton next;
     private SeekBar seek;
     private TextView text;
+    private TextView lengthText;
 	
-	public ListenBar(Context context) {
+	public ControlView(Context context) {
 		super(context);
 	}
 
@@ -51,7 +52,9 @@ public class ListenBar extends FrameLayout implements OnClickListener, OnDrawerO
 	    play = (ImageButton)findViewById(R.id.StreamPlayButton);
 	    next = (ImageButton)findViewById(R.id.StreamNextButton);
 	    seek = (SeekBar)findViewById(R.id.StreamProgressBar);
-	    text = (TextView)findViewById(R.id.StreamTextView); 
+	    text = (TextView)findViewById(R.id.StreamTextView);
+	    lengthText = (TextView) findViewById(R.id.StreamLengthText);
+	    lengthText.setText("");
 	    
 	    prev.setOnClickListener(this);
 	    play.setOnClickListener(this);
@@ -159,6 +162,7 @@ public class ListenBar extends FrameLayout implements OnClickListener, OnDrawerO
 		    }
 		    
 		    String artist = intent.getExtras().getString("artist");
+		    String album = intent.getExtras().getString("album");
 		    String title = intent.getExtras().getString("title");
 		    
 		    text.setText(artist + " - " + title);

@@ -257,7 +257,9 @@ public class LibrarySongView extends ListActivity {
 				// Fire up an AlphabetIndexer for ListView fastscroll
 				mIndexer = new AlphabetIndexer(c, c.getColumnIndex(Audio.Media.TITLE), mResources.getString(R.string.fastscroll_index));
 			} catch (IllegalArgumentException e) {
-				
+				e.printStackTrace();
+			} catch (NullPointerException e) {
+				e.printStackTrace();
 			}
 		}
 		

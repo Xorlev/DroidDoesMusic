@@ -56,6 +56,7 @@ public class Player extends Service implements OnCompletionListener {
 		mHandler.removeCallbacksAndMessages(null);
 		mNotificationManager.cancelAll();
 		mp.release();
+		lbm.playbackcomplete();
 		
 		if (lastUpdateBroadcast != null) {
 			getApplicationContext().removeStickyBroadcast(lastUpdateBroadcast);
@@ -67,7 +68,6 @@ public class Player extends Service implements OnCompletionListener {
 	}
 	
 	public void onCompletion(MediaPlayer mp) {
-		lbm.playbackcomplete();
 		stopMusic();	
 	}
 	
@@ -136,6 +136,7 @@ public class Player extends Service implements OnCompletionListener {
 		mp.stop();
 		mp.reset();
 		stopNotify();
+		lbm.playbackcomplete();
 	}
 	
 	public void seek(int position) {
@@ -179,8 +180,8 @@ public class Player extends Service implements OnCompletionListener {
 	}
 
 	private void spawnNotification() {
-		CharSequence contentTitle = getString(com.uid.DroidDoesMusic.R.string.app_name);
-		String contentText = artist + " - " + title;
+		CharSequence contentTitle = title;
+		String contentText = artist;
 		
 		Notification notification = new Notification(android.R.drawable.ic_media_play, contentText, System.currentTimeMillis());
 		notification.flags = Notification.FLAG_NO_CLEAR
@@ -220,8 +221,16 @@ public class Player extends Service implements OnCompletionListener {
 		}
 		
 		public final void playbackPaused() {
+			playbackPaused(0);
+		}
+		
+		public final void playbackPaused(int resumeFrom) {
 			//if (sp.getBoolean("lastfm_scrobble", false)) {
-				context.sendBroadcast(new Intent("fm.last.android.playbackpaused"));
+				Intent i = new Intent("fm.last.android.playbackpaused");
+				if (resumeFrom > 0) {
+					i.putExtra("position", (long)resumeFrom);
+				}
+				context.sendBroadcast(i);
 			//}
 		}
 		

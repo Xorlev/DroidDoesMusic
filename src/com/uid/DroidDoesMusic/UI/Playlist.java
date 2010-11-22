@@ -34,11 +34,49 @@ public class Playlist extends ListActivity {
     public void onCreate(Bundle savedInstanceState) {
         Log.d(TAG, getClass().getSimpleName() + ": onCreate");
         super.onCreate(savedInstanceState);
+        
+        
+        /*************Some Useful code I found on the web*****************
+        final String [] STAR= {"*"};
+        Log.i(TAG, "All the titles");
+        Uri allaudio_uri = MediaStore.Audio.Media.EXTERNAL_CONTENT_URI;
+        Cursor ca= managedQuery(allaudio_uri, STAR, null,null,null);
+        for(ca.moveToFirst(); !ca.isAfterLast(); ca.moveToNext()){
+            if(ca.isFirst()){   // print all the fields of the first song
+                for(int k= 0; k<ca.getColumnCount(); k++)
+                    Log.i(TAG, "  "+ca.getColumnName(k)+"="+ca.getString(k));
+            }else{              // but just the titles of the res
+                Log.i(TAG, ca.getString(ca.getColumnIndex("title")));
+            }
+        }
+        Log.i(TAG, "--------------------------");
+        Log.i(TAG, "All the playlists");
+        Uri playlist_uri= MediaStore.Audio.Playlists.EXTERNAL_CONTENT_URI;    
+        Cursor cursor= managedQuery(playlist_uri, STAR, null,null,null);
+        cursor.moveToFirst();
+        for(int r= 0; r<cursor.getCount(); r++, cursor.moveToNext()){
+            Log.i(TAG, "-----");
+            Log.i(TAG, "Playlist " + cursor.getString(cursor.getColumnIndex("name")));
+            for(int k= 0; k<cursor.getColumnCount(); k++)           
+                Log.i(TAG, cursor.getColumnName(k)+"="+cursor.getString(k));
+
+            // the members of this playlist
+            int id= cursor.getInt(0);
+            Uri membersUri = MediaStore.Audio.Playlists.Members.getContentUri("external", id);
+            Cursor membersCursor = managedQuery(membersUri, STAR, null, null, null);
+            membersCursor.moveToFirst();
+            for(int s= 0; s<membersCursor.getCount(); s++, membersCursor.moveToNext())
+                Log.i(TAG, "  "+membersCursor.getString(membersCursor.getColumnIndex("title")));
+            membersCursor.close();
+        }
+        cursor.close();
+      /*******************************************************/
+            
        ListAdapter adapter;
        Log.d("DroidDoesMusic",Audio.Playlists.EXTERNAL_CONTENT_URI.toString());
 
         PlaylistManager pl = PlaylistManager.getInstance(this);
-        adapter = pl.listPlaylists(this);
+        adapter = pl.listPlaylists();
         
 		this.setListAdapter(adapter);
         
@@ -49,8 +87,7 @@ public class Playlist extends ListActivity {
 		Log.d(TAG, getClass().getSimpleName() + ": onListItemClick: (" + id + ")");
 		super.onListItemClick(l, v, position, id);
 		
-		cur.moveToPosition(position);
-		String selection = cur.getString(0);
+		this.setListAdapter(PlaylistManager.getInstance(this).listSongs(position));
 		
 	}
 	

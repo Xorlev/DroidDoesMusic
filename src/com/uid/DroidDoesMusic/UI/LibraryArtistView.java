@@ -75,7 +75,7 @@ public class LibraryArtistView extends ListActivity {
 				
 		Intent i = new Intent(Intent.ACTION_PICK);
 		i.setDataAndType(Uri.EMPTY, "vnd.android.cursor.dir/ddm.album");
-		i.putExtra(LibraryAlbumView.INTENT_ITEM_KEY, cur.getInt(cur.getColumnIndex(Audio.Artists.ARTIST)));
+		i.putExtra(LibraryAlbumView.INTENT_ITEM_KEY, cur.getString(cur.getColumnIndex(Audio.Artists.ARTIST)));
 		i.putExtra(LibraryAlbumView.INTENT_ITEM_KEY2, cur.getInt(cur.getColumnIndex(Audio.Artists._ID)));
 		startActivity(i);
 	}

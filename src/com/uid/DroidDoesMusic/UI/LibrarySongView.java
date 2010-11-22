@@ -222,7 +222,6 @@ public class LibrarySongView extends ListActivity {
     	try {
     		getParent().bindService(new Intent("com.uid.DroidDoesMusic.player.Player"), mConnection, Context.BIND_AUTO_CREATE);
     	} catch(NullPointerException e) {
-	    	Toast.makeText(this, "NPE: Failed to bind.", Toast.LENGTH_SHORT).show();
 	    	bindService(new Intent("com.uid.DroidDoesMusic.player.Player"), mConnection, Context.BIND_AUTO_CREATE);
 	    }
     }

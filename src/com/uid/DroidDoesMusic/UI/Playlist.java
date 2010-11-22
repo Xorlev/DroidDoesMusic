@@ -1,23 +1,16 @@
 package com.uid.DroidDoesMusic.UI;
 
 import android.app.ListActivity;
-import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
-import android.provider.MediaStore.Audio;
-import android.provider.MediaStore.Audio.Playlists.Members;
 import android.util.Log;
-import android.view.Gravity;
 import android.view.View;
 import android.widget.ListAdapter;
 import android.widget.ListView;
-import android.widget.SimpleCursorAdapter;
-import android.widget.Toast;
 
-import com.uid.DroidDoesMusic.R;
 import com.uid.DroidDoesMusic.util.PlaylistManager;
 
 /**
@@ -31,13 +24,14 @@ public class Playlist extends ListActivity {
 	Uri extContentPlaylists = MediaStore.Audio.Playlists.EXTERNAL_CONTENT_URI;
 	private String playlistName = new String();
 	private int playlistId;
-	
+	private ListAdapter mAdapter;
     /** Called when the activity is first created. */	
 	@Override
     public void onCreate(Bundle savedInstanceState) {
         Log.d(TAG, getClass().getSimpleName() + ": onCreate");
         super.onCreate(savedInstanceState);
-       	this.setListAdapter(PlaylistManager.getInstance(this).listPlaylists());
+        mAdapter = PlaylistManager.getInstance(this).listPlaylists();
+       	this.setListAdapter(mAdapter);
 	}
 	
 	@Override
@@ -45,12 +39,16 @@ public class Playlist extends ListActivity {
 		Log.d(TAG, getClass().getSimpleName() + ": onListItemClick: (" + id + ")");
 		super.onListItemClick(l, v, position, id);
 		
-		this.setListAdapter(PlaylistManager.getInstance(this).listSongs(position));
-		
-		
+		//this.setListAdapter(PlaylistManager.getInstance(this).listSongs(position));
+		Log.d(TAG,"Position: "+position);
+		Cursor c = (Cursor)mAdapter.getItem(position);
+		Log.d(TAG,"Cursor to string:"+c.toString());
+		playlistId = c.getInt(c.getColumnIndex(MediaStore.Audio.Playlists._ID));
+		Log.d(TAG,"Column Index: "+c.getColumnIndex(MediaStore.Audio.Playlists._ID));
+		Log.d(TAG,"Playlistid: "+playlistId);
 		Intent i = new Intent(this,PlaylistSongView.class);
-		i.putExtra(PlaylistSongView.INTENT_ITEM_PLAYLIST_NAME,"Selected Playlist");
-		i.putExtra(PlaylistSongView.INTENT_ITEM_PLAYLIST_ID, (Integer)v.getTag(R.id.artist_id));
+		i.putExtra(PlaylistSongView.INTENT_ITEM_PLAYLIST_NAME,(String)v.getTag(android.R.id.text1));
+		i.putExtra(PlaylistSongView.INTENT_ITEM_PLAYLIST_ID, playlistId);
 		i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
 		startActivity(i);
 		

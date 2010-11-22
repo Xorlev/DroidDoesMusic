@@ -57,14 +57,12 @@ public class PlaylistManager {
 		Log.d("DroidDoesMusic","Here I am:   "+android.provider.MediaStore.Audio.Playlists.EXTERNAL_CONTENT_URI.toString());
 		return adapter;
 	}
-	public ListAdapter listSongs( int selection){
-		mCur.moveToPosition(selection);
+	public ListAdapter listSongs( int playlistId){
 		ListAdapter adapter;
 		String[] displayColumns = {Audio.AudioColumns.TITLE};
 		int layout = android.R.layout.simple_list_item_1;
 		int[] display = new int[] { android.R.id.text1};
-		int id= mCur.getInt(0);
-		Uri membersUri = MediaStore.Audio.Playlists.Members.getContentUri("external", id);
+		Uri membersUri = MediaStore.Audio.Playlists.Members.getContentUri("external", playlistId);
 		mCur = cr.query(membersUri, STAR, null, null, Audio.Media.DEFAULT_SORT_ORDER);
 		adapter = new SimpleCursorAdapter(context,layout,mCur,displayColumns,display);
 		return adapter;
@@ -85,6 +83,7 @@ public class PlaylistManager {
 		if(currentSongQuery!=null){
 			if(currentSongQuery.moveToPosition(mPosition)){
 				if(currentSongQuery.moveToNext()){
+					this.mPosition+=1;
 					String song [] = new String[4];
 					song[ARTIST]=currentSongQuery.getString(currentSongQuery.getColumnIndex(Audio.Media.ARTIST));
 					song[ALBUM]=currentSongQuery.getString(currentSongQuery.getColumnIndex(Audio.Media.ALBUM));

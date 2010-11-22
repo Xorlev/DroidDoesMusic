@@ -28,8 +28,6 @@ import com.uid.DroidDoesMusic.util.PlaylistManager;
  */
 public class Playlist extends ListActivity {
 	protected static final String TAG = "DroidDoesMusic";
-	public static final String INTENT_ITEM_PLAYLIST_NAME = "playlistName";
-	public static final String INTENT_ITEM_PLAYLIST_ID = "playlistID";
 	Uri extContentPlaylists = MediaStore.Audio.Playlists.EXTERNAL_CONTENT_URI;
 	private String playlistName = new String();
 	private int playlistId;
@@ -39,29 +37,8 @@ public class Playlist extends ListActivity {
     public void onCreate(Bundle savedInstanceState) {
         Log.d(TAG, getClass().getSimpleName() + ": onCreate");
         super.onCreate(savedInstanceState);
-        
-        try {
-	        playlistName = getIntent().getExtras().getString(INTENT_ITEM_PLAYLIST_NAME);
-	        playlistId = getIntent().getExtras().getInt(INTENT_ITEM_PLAYLIST_ID);
-	        setTitle(playlistName);
-	        
-	        if (playlistName == null) {
-	        	playlistName = "";
-	        }
-        } catch (NullPointerException e) {
-        	playlistName = "";
-        }            
-
-        
-        
-        if(playlistId != 0){
-        	this.setListAdapter(PlaylistManager.getInstance(this).listSongs(playlistId));
-        } else {
-        	this.setListAdapter(PlaylistManager.getInstance(this).listPlaylists());
-        }
-        
-        
-    }
+       	this.setListAdapter(PlaylistManager.getInstance(this).listPlaylists());
+	}
 	
 	@Override
 	public void onListItemClick(ListView l, View v, int position, long id) {
@@ -72,10 +49,9 @@ public class Playlist extends ListActivity {
 		
 		
 		Intent i = new Intent(this,PlaylistSongView.class);
-		i.putExtra(Playlist.INTENT_ITEM_PLAYLIST_NAME,"Selected Playlist");
-		i.putExtra(Playlist.INTENT_ITEM_PLAYLIST_ID, (Integer)v.getTag(R.id.artist_id));
+		i.putExtra(PlaylistSongView.INTENT_ITEM_PLAYLIST_NAME,"Selected Playlist");
+		i.putExtra(PlaylistSongView.INTENT_ITEM_PLAYLIST_ID, (Integer)v.getTag(R.id.artist_id));
 		i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-		
 		startActivity(i);
 		
 	}

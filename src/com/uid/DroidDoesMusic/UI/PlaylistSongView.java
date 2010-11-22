@@ -21,7 +21,7 @@ import com.uid.DroidDoesMusic.R;
 import com.uid.DroidDoesMusic.util.PlaylistManager;
 
 /**
- * This class extends List Activity to show what playlists are on the device.
+ * This class extends List Activity to show what songs are on the device.
  * 
  * @author jzeimen
  *
@@ -60,18 +60,7 @@ public class PlaylistSongView extends ListActivity {
 	public void onListItemClick(ListView l, View v, int position, long id) {
 		Log.d(TAG, getClass().getSimpleName() + ": onListItemClick: (" + id + ")");
 		super.onListItemClick(l, v, position, id);
-		
-		this.setListAdapter(PlaylistManager.getInstance(this).listSongs(position));
-		
-		
-		Intent i = new Intent(Intent.ACTION_PICK);
-		i.setDataAndType(Uri.EMPTY, "vnd.android.cursor.dir/ddm.track");
-		i.putExtra(Playlist.INTENT_ITEM_PLAYLIST_NAME,"Selected Playlist");
-		i.putExtra(Playlist.INTENT_ITEM_PLAYLIST_ID, (Integer)v.getTag(R.id.artist_id));
-		i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-		
-		startActivity(i);
-		
+
 	}
 	
 

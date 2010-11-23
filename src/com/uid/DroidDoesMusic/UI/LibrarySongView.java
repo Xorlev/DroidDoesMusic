@@ -124,8 +124,9 @@ public class LibrarySongView extends ListActivity {
 		String dataPath = cur.getString(cur.getColumnIndex(Audio.Media.DATA));
 		
 		if (isPlayerBound) {
-			mPlayer.stopMusic();
-			mPlayer.setSong(artist, album, title, dataPath);
+			//mPlayer.stopMusic();
+			//mPlayer.setSong(artist, album, title, dataPath);
+			mPlayer.enqueueLast(artist, album, title, dataPath);
 			mPlayer.startMusic();
 		}
 	}

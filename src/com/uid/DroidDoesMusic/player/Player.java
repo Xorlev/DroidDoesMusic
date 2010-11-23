@@ -1,6 +1,7 @@
 package com.uid.DroidDoesMusic.player;
 
 import java.io.IOException;
+import java.util.LinkedList;
 
 import android.app.Notification;
 import android.app.NotificationManager;
@@ -8,14 +9,15 @@ import android.app.PendingIntent;
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.media.MediaPlayer;
 import android.media.MediaPlayer.OnCompletionListener;
 import android.os.Binder;
 import android.os.Handler;
 import android.os.IBinder;
-import android.preference.PreferenceManager;
 import android.util.Log;
+import android.widget.Toast;
+
+import com.uid.DroidDoesMusic.R;
 
 public class Player extends Service implements OnCompletionListener {
 	protected final String TAG = "DroidDoesMusic";
@@ -38,6 +40,8 @@ public class Player extends Service implements OnCompletionListener {
 	
 	private NotificationManager mNotificationManager;
 	private LastfmBroadcaster lbm = new LastfmBroadcaster(this);
+	
+	private LinkedList<Song> songQueue = new LinkedList<Song>();
 
 	public void onCreate(){
 		super.onCreate();
@@ -68,7 +72,7 @@ public class Player extends Service implements OnCompletionListener {
 	}
 	
 	public void onCompletion(MediaPlayer mp) {
-		stopMusic();	
+		nextSong();
 	}
 	
 	public class DataBinder extends Binder {
@@ -100,24 +104,32 @@ public class Player extends Service implements OnCompletionListener {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+		
+		isSongStarted = false;
 	}
 
-	public void startMusic(){
-	    try {
-			mp.prepare();
-		} catch (IllegalStateException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+	public void startMusic() {
+		if (!mp.isPlaying()) {
+		    try {
+				mp.prepare();
+			} catch (IllegalStateException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			
+			
+			if (!isSongStarted) {
+				lbm.startTrack(artist, album, title, mp.getDuration());
+			}
+			
+		    mp.start();
+			isSongStarted = true;
+			spawnNotification();
+			mHandler.postDelayed(mUpdateProgressTimeTask, 500);
 		}
-		
-	    mp.start();
-		isSongStarted = true;
-		spawnNotification();
-		mHandler.postDelayed(mUpdateProgressTimeTask, 500);
-		lbm.startTrack(artist, album, title, mp.getDuration());
 	}
 	
 	//I see this being the 2 vertical line button that pauses the song in the middle, allowing the user to continue play later
@@ -137,6 +149,46 @@ public class Player extends Service implements OnCompletionListener {
 		mp.reset();
 		stopNotify();
 		lbm.playbackcomplete();
+	}
+	
+	public void nextSong() {
+		stopMusic();
+		
+		if (!songQueue.isEmpty()) {
+			Song s = songQueue.poll();
+			
+			setSong(s.artist, s.album, s.title, s.datapath);
+			
+			// Delay start by a second
+			new Handler().postDelayed(new Runnable() { 
+				public void run() { 
+					startMusic(); 
+				}}, 1000);
+		}
+	}
+	
+	public void prevSong() {
+		
+	}
+	
+	public void enqueueFirst(String artist, String album, String title, String dataPath) {
+		songQueue.addFirst(new Song(artist, album, title, dataPath));
+		
+		if (!mp.isPlaying() && !isSongStarted) {
+			nextSong();
+		}
+		
+		Toast.makeText(this, title + " " + getResources().getString(R.string.enqueue_first_success), Toast.LENGTH_SHORT).show();
+	}
+	
+	public void enqueueLast(String artist, String album, String title, String dataPath) {
+		songQueue.addLast(new Song(artist, album, title, dataPath));
+		
+		if (!mp.isPlaying() && !isSongStarted) {
+			nextSong();
+		}
+		
+		Toast.makeText(this, title + " " + getResources().getString(R.string.enqueue_last_success), Toast.LENGTH_SHORT).show();
 	}
 	
 	public void seek(int position) {
@@ -239,5 +291,20 @@ public class Player extends Service implements OnCompletionListener {
 				context.sendBroadcast(new Intent("fm.last.android.playbackcomplete"));
 			//}
 		}
+	}
+	
+	private class Song {
+		public String artist;
+		public String album;
+		public String title;
+		public String datapath;
+		
+		public Song(String artist, String album, String title, String datapath) {
+			this.artist = artist;
+			this.album = album;
+			this.title = title;
+			this.datapath = datapath;
+		}
+		
 	}
 }

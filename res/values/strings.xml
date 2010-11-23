@@ -16,6 +16,9 @@
 	<string name="unknown_album">Unknown Album</string>
 	<string name="unknown_track">Unknown Track</string>
 	
+	<string name="enqueue_first_success">added to front of the queue</string>
+	<string name="enqueue_last_success">added to end of the queue</string>
+	
 	<string name="empty">No items in list</string>
 	<string name="no_sd_card">The SD Card is not Ready.</string>
 	

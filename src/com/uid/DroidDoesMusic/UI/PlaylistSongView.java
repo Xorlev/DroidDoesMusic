@@ -1,5 +1,7 @@
 package com.uid.DroidDoesMusic.UI;
 
+import java.util.HashMap;
+
 import android.app.ListActivity;
 import android.net.Uri;
 import android.os.Bundle;
@@ -56,22 +58,28 @@ public class PlaylistSongView extends ListActivity {
 
 		mPlaylistManager.setSelectedPlaylist(playlistId);
 		mPlaylistManager.setPosition(position);
-		String info[] = mPlaylistManager.currentSong();
-
-		for( int i=0;i<info.length;i++){
-			Toast t = Toast.makeText(this,info[i], Toast.LENGTH_SHORT);
-			t.show();
+		HashMap<String,String> info = mPlaylistManager.currentSong();
+		
+		if(mPlaylistManager.addToCurrentPlaylist(info.get(PlaylistManager.DATAPATH))){
+			
 		}
+		
+		
+		
+		/*Toast.makeText(this,info.get(PlaylistManager.ARTIST), Toast.LENGTH_SHORT).show();
+		Toast.makeText(this,info.get(PlaylistManager.ALBUM), Toast.LENGTH_SHORT).show();
+		Toast.makeText(this,info.get(PlaylistManager.TITLE), Toast.LENGTH_SHORT).show();
+		Toast.makeText(this,info.get(PlaylistManager.DATAPATH), Toast.LENGTH_SHORT).show();
 		info = mPlaylistManager.nextSong();
 		if (info!=null){
 			Toast.makeText(this, "Next song:", Toast.LENGTH_SHORT).show();
-			for( int i=0;i<info.length;i++){
-				Toast t = Toast.makeText(this,info[i], Toast.LENGTH_SHORT);
-				t.show();
-			}
+			Toast.makeText(this,info.get(PlaylistManager.ARTIST), Toast.LENGTH_SHORT).show();
+			Toast.makeText(this,info.get(PlaylistManager.ALBUM), Toast.LENGTH_SHORT).show();
+			Toast.makeText(this,info.get(PlaylistManager.TITLE), Toast.LENGTH_SHORT).show();
+			Toast.makeText(this,info.get(PlaylistManager.DATAPATH), Toast.LENGTH_SHORT).show();
 		} else {
 			Toast.makeText(this, "This was the last song in the playlist", Toast.LENGTH_SHORT).show();
-		}
+		}*/
 	}
 
 

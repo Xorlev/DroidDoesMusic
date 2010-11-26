@@ -18,10 +18,11 @@ import android.provider.MediaStore;
 import android.provider.MediaStore.Audio;
 import android.util.Log;
 import android.view.GestureDetector;
+import android.view.GestureDetector.SimpleOnGestureListener;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.View.OnTouchListener;
 import android.view.ViewGroup;
-import android.view.GestureDetector.SimpleOnGestureListener;
 import android.widget.AlphabetIndexer;
 import android.widget.ListView;
 import android.widget.SectionIndexer;
@@ -73,7 +74,9 @@ public class LibrarySongView extends ListActivity {
         
         getListView().setFastScrollEnabled(true);
         
-        gestureScanner = new GestureDetector(new FlingDetector());
+        FlingDetector f = new FlingDetector(this);
+        getListView().setOnTouchListener(f);
+        
         
         // Populate ListView
         bind();
@@ -103,8 +106,14 @@ public class LibrarySongView extends ListActivity {
 		unregisterReceiver(this.externalMediaListener);
 	}
 	
+	public boolean onTouch(View v, MotionEvent e) {
+		Log.d(TAG, "onTouch" + e);
+		return onTouchEvent(e);
+	}
+	
 	@Override
 	public boolean onTouchEvent(MotionEvent event) {
+		Toast.makeText(this, "onTouchEvent", Toast.LENGTH_SHORT);
 		if (gestureScanner.onTouchEvent(event))
 			return true;
 		else
@@ -323,10 +332,15 @@ public class LibrarySongView extends ListActivity {
 			TextView line2;
 		}
 	}
-	private class FlingDetector extends SimpleOnGestureListener {
-		private static final int SWIPE_MIN_DISTANCE = 120;
-		private static final int SWIPE_MAX_OFF_PATH = 250;
+	private class FlingDetector extends SimpleOnGestureListener implements OnTouchListener {
+		private static final int SWIPE_MIN_DISTANCE = 100;
+		private static final int SWIPE_MAX_OFF_PATH = 350;
 		private static final int SWIPE_THRESHOLD_VELOCITY = 200;
+		private GestureDetector gestureDetector;
+		
+		public FlingDetector(Context ctx) {
+			gestureDetector = new GestureDetector(ctx, this);
+		}
 		
 		@Override
 		public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX, float velocityY) {
@@ -334,19 +348,30 @@ public class LibrarySongView extends ListActivity {
 				if (Math.abs(e1.getY() - e2.getY()) > SWIPE_MAX_OFF_PATH)
 					return false;
 				// right to left swipe
-				if (e1.getX() - e2.getX() > SWIPE_MIN_DISTANCE
-						&& Math.abs(velocityX) > SWIPE_THRESHOLD_VELOCITY) {
-					Toast.makeText(LibrarySongView.this, "Left Swipe",
-							Toast.LENGTH_SHORT).show();
-				} else if (e2.getX() - e1.getX() > SWIPE_MIN_DISTANCE
-						&& Math.abs(velocityX) > SWIPE_THRESHOLD_VELOCITY) {
-					Toast.makeText(LibrarySongView.this, "Right Swipe",
-							Toast.LENGTH_SHORT).show();
+				if (e1.getX() - e2.getX() > SWIPE_MIN_DISTANCE && Math.abs(velocityX) > SWIPE_THRESHOLD_VELOCITY) {
+					Toast.makeText(LibrarySongView.this, "Left Swipe", Toast.LENGTH_SHORT).show();
+					
+					return true;
+				} else if (e2.getX() - e1.getX() > SWIPE_MIN_DISTANCE && Math.abs(velocityX) > SWIPE_THRESHOLD_VELOCITY) {
+					Toast.makeText(LibrarySongView.this, "Right Swipe", Toast.LENGTH_SHORT).show();
+					int pos = LibrarySongView.this.getListView().pointToPosition((int)(e2.getX() - e1.getX())/2, (int)(e2.getY() - e1.getY())/2);
+					Toast.makeText(LibrarySongView.this, "ItemPos: " + getString(pos), Toast.LENGTH_SHORT).show();
+					return true;
 				}
 			} catch (Exception e) {
 				// nothing
 			}
 			return false;
+		}
+		
+        @Override
+        public boolean onSingleTapConfirmed(MotionEvent e) {
+        	return true;
+            //return super.onSingleTapConfirmed(e);
+        }
+
+		public boolean onTouch(View v, MotionEvent event) {
+			return gestureDetector.onTouchEvent(event);
 		}
 	}
 }

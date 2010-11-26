@@ -150,7 +150,6 @@ public class ControlView extends FrameLayout implements OnClickListener, OnDrawe
 	private BroadcastReceiver trackChangeReceiver = new BroadcastReceiver() {
 		@Override
 		public void onReceive(Context content, Intent intent) {
-	        Log.d(TAG, getClass().getSimpleName() + ": onReceive: " + intent.getData());
 	        
 		    prev.setEnabled(true);
 		    play.setEnabled(true);
@@ -171,9 +170,7 @@ public class ControlView extends FrameLayout implements OnClickListener, OnDrawe
 	
 	private BroadcastReceiver trackUpdateReceiver = new BroadcastReceiver() {
 		@Override
-		public void onReceive(Context content, Intent intent) {
-	        Log.d(TAG, getClass().getSimpleName() + ": onReceive: " + intent.getData());
-	        
+		public void onReceive(Context content, Intent intent) {	        
 		    int duration = intent.getExtras().getInt("duration");
 		    int position = intent.getExtras().getInt("position");
 		    

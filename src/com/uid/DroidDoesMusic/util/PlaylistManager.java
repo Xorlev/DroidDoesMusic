@@ -83,8 +83,14 @@ public class PlaylistManager {
 		int[] display = new int[] { android.R.id.text1};
 		
 		mCur = cr.query(android.provider.MediaStore.Audio.Playlists.EXTERNAL_CONTENT_URI, projection, null, null, Audio.Playlists.DEFAULT_SORT_ORDER);
+		
+		try{
 		mCur.moveToFirst();
-		Log.d("DroidDoesMusic","Here I am:   "+mCur.getInt(mCur.getColumnIndex(Audio.Playlists._ID)));
+		} catch (NullPointerException e){
+			return null;
+		}
+		//TODO this line causes something crazy to happen if there is no music
+		//Log.d("DroidDoesMusic","Here I am:   "+mCur.getInt(mCur.getColumnIndex(Audio.Playlists._ID)));
 		SimpleCursorAdapter adapter = new SimpleCursorAdapter(context,layout,mCur,displayColumns,display);
 		
 		return adapter;

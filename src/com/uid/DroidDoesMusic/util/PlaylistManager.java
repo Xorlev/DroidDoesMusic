@@ -81,7 +81,7 @@ public class PlaylistManager {
 		
 		mCur = cr.query(android.provider.MediaStore.Audio.Playlists.EXTERNAL_CONTENT_URI, projection, null, null, Audio.Playlists.DEFAULT_SORT_ORDER);
 		mCur.moveToFirst();
-		Log.d("DroidDoesMusic","Here I am:   "+mCur.getInt(mCur.getColumnIndex(Audio.Playlists._ID)));
+		//Log.d("DroidDoesMusic","Here I am:   "+mCur.getInt(mCur.getColumnIndex(Audio.Playlists._ID)));
 		SimpleCursorAdapter adapter = new SimpleCursorAdapter(context,layout,mCur,displayColumns,display);
 		
 		return adapter;

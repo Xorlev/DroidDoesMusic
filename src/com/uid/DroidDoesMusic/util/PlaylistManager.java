@@ -5,10 +5,10 @@ import java.util.HashMap;
 import android.content.ContentResolver;
 import android.content.ContentValues;
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.database.Cursor;
-import android.database.sqlite.SQLiteDatabase;
-import android.database.sqlite.SQLiteDatabase.CursorFactory;
 import android.net.Uri;
+import android.preference.PreferenceManager;
 import android.provider.MediaStore;
 import android.provider.MediaStore.Audio;
 import android.util.Log;
@@ -35,6 +35,7 @@ public class PlaylistManager {
 	private static int mCurrentPlaylist;
 	private static Cursor mCurrentPlaylistMembers;
 	private static final String [] STAR = {"*"};
+	private static SharedPreferences sp;
 
 	//Positions in the next song string array
 	public static final String ARTIST="ARTIST";
@@ -52,7 +53,9 @@ public class PlaylistManager {
 
 		this.context = context;
 		this.cr = context.getContentResolver();
-
+		PlaylistManager.sp = PreferenceManager.getDefaultSharedPreferences(context);
+		
+		mCurrentPlaylist = PlaylistManager.sp.getInt("PlaylistCurrentPlaylistId", 0);
 	}
 	
 	/**
@@ -104,7 +107,11 @@ public class PlaylistManager {
 	}
 
 	public void setPlaylistId(int playlistId){
-		this.mCurrentPlaylist = playlistId;
+		PlaylistManager.mCurrentPlaylist = playlistId;
+		
+		SharedPreferences.Editor e = sp.edit();
+		e.putInt("PlaylistCurrentPlaylistId", playlistId);
+		e.commit();
 	}
 	/**
 	 * Returns a string array for info on the next song.

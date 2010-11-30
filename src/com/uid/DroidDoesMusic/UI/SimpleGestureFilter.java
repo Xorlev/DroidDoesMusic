@@ -113,13 +113,11 @@ public class SimpleGestureFilter extends SimpleOnGestureListener {
 
 		if (velocityX > this.swipe_Min_Velocity
 				&& xDistance > this.swipe_Min_Distance) {
-			int x_avg = Math.abs((int)(e1.getX() + e2.getX())/2);
-			int y_avg = Math.abs((int)(e1.getY() + e2.getY())/2);
 			
 			if (e1.getX() > e2.getX()) // right to left
-				this.listener.onSwipe(SWIPE_LEFT, x_avg, y_avg);
+				this.listener.onSwipe(SWIPE_LEFT, (int)e1.getX(), (int)e1.getY());
 			else
-				this.listener.onSwipe(SWIPE_RIGHT, x_avg, y_avg);
+				this.listener.onSwipe(SWIPE_RIGHT, (int)e1.getX(), (int)e1.getY());
 
 			result = true;
 		} else if (velocityY > this.swipe_Min_Velocity

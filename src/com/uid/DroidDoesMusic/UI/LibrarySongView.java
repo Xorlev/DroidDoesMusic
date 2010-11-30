@@ -17,11 +17,8 @@ import android.os.IBinder;
 import android.provider.MediaStore;
 import android.provider.MediaStore.Audio;
 import android.util.Log;
-import android.view.GestureDetector;
-import android.view.GestureDetector.SimpleOnGestureListener;
 import android.view.MotionEvent;
 import android.view.View;
-import android.view.View.OnTouchListener;
 import android.view.ViewGroup;
 import android.widget.AlphabetIndexer;
 import android.widget.ListView;
@@ -31,9 +28,10 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.uid.DroidDoesMusic.R;
+import com.uid.DroidDoesMusic.UI.SimpleGestureFilter.SimpleGestureListener;
 import com.uid.DroidDoesMusic.player.Player;
 
-public class LibrarySongView extends ListActivity {
+public class LibrarySongView extends ListActivity implements SimpleGestureListener {
 	protected static final String TAG = "DroidDoesMusic";
 	public static final String INTENT_ITEM_KEY = "albumName";
 	public static final String INTENT_ITEM_KEY2 = "artistId";
@@ -47,7 +45,7 @@ public class LibrarySongView extends ListActivity {
 	private boolean isPlayerBound = false;
 	private Player mPlayer;
 	
-	private GestureDetector gestureScanner;
+	private SimpleGestureFilter detector; 
 	
 	@Override
     public void onCreate(Bundle savedInstanceState) {
@@ -73,15 +71,48 @@ public class LibrarySongView extends ListActivity {
         }
         
         getListView().setFastScrollEnabled(true);
-        
-        FlingDetector f = new FlingDetector(this);
-        getListView().setOnTouchListener(f);
-        
-        
+              
+        detector = new SimpleGestureFilter(this,this);
+        detector.setMode(SimpleGestureFilter.MODE_DYNAMIC);
+        detector.setEnabled(true);
         // Populate ListView
         bind();
         populateDataIfReady();
     }
+	@Override 
+	public boolean dispatchTouchEvent(MotionEvent me){ 
+		this.detector.onTouchEvent(me);
+		return super.dispatchTouchEvent(me); 
+	}
+
+
+	public void onSwipe(int direction, int x, int y) {
+		String str = "";
+
+		switch (direction) {
+
+		case SimpleGestureFilter.SWIPE_RIGHT:
+			int pos = getListView().pointToPosition(x, y);
+			cur.moveToPosition(pos);
+
+			String artist = cur.getString(cur.getColumnIndex(Audio.Media.ARTIST));
+			String album = cur.getString(cur.getColumnIndex(Audio.Media.ALBUM));
+			String title = cur.getString(cur.getColumnIndex(Audio.Media.TITLE));
+			String dataPath = cur.getString(cur.getColumnIndex(Audio.Media.DATA));
+
+			str = artist + " - " + title;
+
+			Toast.makeText(this, str, Toast.LENGTH_SHORT).show();
+			break;
+		case SimpleGestureFilter.SWIPE_LEFT:
+			break;
+		}
+
+	}
+
+	public void onDoubleTap() {
+		  Toast.makeText(this, "Double Tap", Toast.LENGTH_SHORT).show(); 
+	}
 	
 	@Override
 	public void onResume() {
@@ -104,20 +135,6 @@ public class LibrarySongView extends ListActivity {
 		super.onResume();
 		
 		unregisterReceiver(this.externalMediaListener);
-	}
-	
-	public boolean onTouch(View v, MotionEvent e) {
-		Log.d(TAG, "onTouch" + e);
-		return onTouchEvent(e);
-	}
-	
-	@Override
-	public boolean onTouchEvent(MotionEvent event) {
-		Toast.makeText(this, "onTouchEvent", Toast.LENGTH_SHORT);
-		if (gestureScanner.onTouchEvent(event))
-			return true;
-		else
-			return false;
 	}
 	
 	@Override
@@ -330,48 +347,6 @@ public class LibrarySongView extends ListActivity {
 		private static class ViewHolder {
 			TextView line1;
 			TextView line2;
-		}
-	}
-	private class FlingDetector extends SimpleOnGestureListener implements OnTouchListener {
-		private static final int SWIPE_MIN_DISTANCE = 100;
-		private static final int SWIPE_MAX_OFF_PATH = 350;
-		private static final int SWIPE_THRESHOLD_VELOCITY = 200;
-		private GestureDetector gestureDetector;
-		
-		public FlingDetector(Context ctx) {
-			gestureDetector = new GestureDetector(ctx, this);
-		}
-		
-		@Override
-		public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX, float velocityY) {
-			try {
-				if (Math.abs(e1.getY() - e2.getY()) > SWIPE_MAX_OFF_PATH)
-					return false;
-				// right to left swipe
-				if (e1.getX() - e2.getX() > SWIPE_MIN_DISTANCE && Math.abs(velocityX) > SWIPE_THRESHOLD_VELOCITY) {
-					Toast.makeText(LibrarySongView.this, "Left Swipe", Toast.LENGTH_SHORT).show();
-					
-					return true;
-				} else if (e2.getX() - e1.getX() > SWIPE_MIN_DISTANCE && Math.abs(velocityX) > SWIPE_THRESHOLD_VELOCITY) {
-					Toast.makeText(LibrarySongView.this, "Right Swipe", Toast.LENGTH_SHORT).show();
-					int pos = LibrarySongView.this.getListView().pointToPosition((int)(e2.getX() - e1.getX())/2, (int)(e2.getY() - e1.getY())/2);
-					Toast.makeText(LibrarySongView.this, "ItemPos: " + getString(pos), Toast.LENGTH_SHORT).show();
-					return true;
-				}
-			} catch (Exception e) {
-				// nothing
-			}
-			return false;
-		}
-		
-        @Override
-        public boolean onSingleTapConfirmed(MotionEvent e) {
-        	return true;
-            //return super.onSingleTapConfirmed(e);
-        }
-
-		public boolean onTouch(View v, MotionEvent event) {
-			return gestureDetector.onTouchEvent(event);
 		}
 	}
 }

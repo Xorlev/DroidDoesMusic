@@ -9,11 +9,13 @@ import android.app.PendingIntent;
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.media.MediaPlayer;
 import android.media.MediaPlayer.OnCompletionListener;
 import android.os.Binder;
 import android.os.Handler;
 import android.os.IBinder;
+import android.preference.PreferenceManager;
 import android.util.Log;
 import android.widget.Toast;
 
@@ -39,13 +41,14 @@ public class Player extends Service implements OnCompletionListener {
 	private Intent lastUpdateBroadcast;
 	
 	private NotificationManager mNotificationManager;
-	private LastfmBroadcaster lbm = new LastfmBroadcaster(this);
+	private LastfmBroadcaster lbm;
 	
 	private LinkedList<Song> songQueue = new LinkedList<Song>();
 
 	public void onCreate(){
 		super.onCreate();
 		mNotificationManager = (NotificationManager)getSystemService(NOTIFICATION_SERVICE);
+		lbm = new LastfmBroadcaster(this);
 		mp.setOnCompletionListener(this);
 	}
 	
@@ -254,22 +257,24 @@ public class Player extends Service implements OnCompletionListener {
 	
 	private static class LastfmBroadcaster {
 		Context context;
-		//SharedPreferences sp; 
+		SharedPreferences sp; 
+		
 		public LastfmBroadcaster(Context context) {
 			this.context = context;
 			//context.getApplicationContext()
-			//sp = PreferenceManager.getDefaultSharedPreferences(context.getApplicationContext());
+			//sp = context.getSharedPreferences("Preferences", 0);
+			sp = PreferenceManager.getDefaultSharedPreferences(context);
 		}
 		
 		public final void startTrack(String artist, String album, String track, int duration) {
-			//if (sp.getBoolean("lastfm_scrobble", false)) {
+			if (sp.getBoolean("lastfm_scrobble", false)) {
 				Intent i = new Intent("fm.last.android.metachanged");
 				i.putExtra("artist", artist);
 				i.putExtra("album", album);
 				i.putExtra("track", track);
 				i.putExtra("duration", duration);
 				context.sendBroadcast(i);
-			//}
+			}
 		}
 		
 		public final void playbackPaused() {
@@ -277,19 +282,19 @@ public class Player extends Service implements OnCompletionListener {
 		}
 		
 		public final void playbackPaused(int resumeFrom) {
-			//if (sp.getBoolean("lastfm_scrobble", false)) {
+			if (sp.getBoolean("lastfm_scrobble", false)) {
 				Intent i = new Intent("fm.last.android.playbackpaused");
 				if (resumeFrom > 0) {
 					i.putExtra("position", (long)resumeFrom);
 				}
 				context.sendBroadcast(i);
-			//}
+			}
 		}
 		
 		public final void playbackcomplete() {
-			//if (sp.getBoolean("lastfm_scrobble", false)) {
+			if (sp.getBoolean("lastfm_scrobble", false)) {
 				context.sendBroadcast(new Intent("fm.last.android.playbackcomplete"));
-			//}
+			}
 		}
 	}
 	
@@ -306,13 +311,17 @@ public class Player extends Service implements OnCompletionListener {
 			this.datapath = datapath;
 		}
 		
+		public String toString() {
+			return artist + " - " + title;
+		}
+		
 	}
 
 	public Object[] getQueues() {
 		return songQueue.toArray();
 	}
-	public Song[] getQueue() {
-		
-		return (Song[]) songQueue.toArray();
+	
+	public LinkedList<Song> getQueue() {
+		return songQueue;
 	}
 }

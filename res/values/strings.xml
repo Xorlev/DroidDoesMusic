@@ -43,4 +43,8 @@
     <string name="msg_listen_playlist">Playlist</string>
     <string name="msg_listen_now">Listen Now</string>
     <string name="msg_listen_later">Add to Playlist</string>
+    
+    <string name="ctx_enqueue">Enqueue Next</string>
+    <string name="ctx_add_playlist">Add to Playlist</string>
+    <string name="ctx_play">Play</string>
 </resources>

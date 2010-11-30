@@ -17,15 +17,21 @@ import android.os.IBinder;
 import android.provider.MediaStore;
 import android.provider.MediaStore.Audio;
 import android.util.Log;
+import android.view.ContextMenu;
+import android.view.ContextMenu.ContextMenuInfo;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Adapter;
 import android.widget.AlphabetIndexer;
 import android.widget.ListView;
 import android.widget.SectionIndexer;
 import android.widget.SimpleCursorAdapter;
 import android.widget.TextView;
 import android.widget.Toast;
+import android.widget.AdapterView.AdapterContextMenuInfo;
 
 import com.uid.DroidDoesMusic.R;
 import com.uid.DroidDoesMusic.UI.SimpleGestureFilter.SimpleGestureListener;
@@ -73,6 +79,7 @@ public class LibrarySongView extends ListActivity implements SimpleGestureListen
         }
         
         getListView().setFastScrollEnabled(true);
+        registerForContextMenu(getListView());
               
         detector = new SimpleGestureFilter(this,this);
         detector.setMode(SimpleGestureFilter.MODE_DYNAMIC);
@@ -84,12 +91,12 @@ public class LibrarySongView extends ListActivity implements SimpleGestureListen
         bind();
         populateDataIfReady();
     }
+	
 	@Override 
 	public boolean dispatchTouchEvent(MotionEvent me){ 
 		this.detector.onTouchEvent(me);
 		return super.dispatchTouchEvent(me); 
 	}
-
 
 	public void onSwipe(int direction, int x, int y) {
 		String str = "";
@@ -101,7 +108,6 @@ public class LibrarySongView extends ListActivity implements SimpleGestureListen
 			cur.moveToPosition(pos);
 
 			String artist = cur.getString(cur.getColumnIndex(Audio.Media.ARTIST));
-			String album = cur.getString(cur.getColumnIndex(Audio.Media.ALBUM));
 			String title = cur.getString(cur.getColumnIndex(Audio.Media.TITLE));
 			String datapath = cur.getString(cur.getColumnIndex(Audio.Media.DATA));
 
@@ -163,6 +169,29 @@ public class LibrarySongView extends ListActivity implements SimpleGestureListen
 			mPlayer.enqueueLast(artist, album, title, dataPath);
 			mPlayer.startMusic();
 		}
+	}
+	
+	@Override
+	public void onCreateContextMenu(ContextMenu menu, View v, ContextMenuInfo menuInfo) {
+		super.onCreateContextMenu(menu, v, menuInfo);
+		
+		AdapterContextMenuInfo info = (AdapterContextMenuInfo)menuInfo;
+		
+		MenuInflater mf = getMenuInflater();
+		mf.inflate(R.menu.song_context, menu);
+		
+		Adapter a = getListAdapter();
+		
+		Object item = a.getItem(info.position);
+	}
+	
+	@Override
+	public boolean onContextItemSelected(MenuItem menuitem) {
+		AdapterContextMenuInfo info = (AdapterContextMenuInfo)menuitem.getMenuInfo();
+		
+		Object item = getListAdapter().getItem(info.position);
+		
+		return true;
 	}
 	
 	public void getSongs(String... albumid) {

@@ -30,15 +30,18 @@ public class ControlView extends FrameLayout implements OnClickListener, OnDrawe
 	protected Player mPlayer;
     protected boolean isPlayerBound = false;
     
+    private ImageButton queue;
     private ImageButton prev;
     private ImageButton play;
     private ImageButton next;
     private SeekBar seek;
     private TextView text;
     private TextView lengthText;
+    private Context ctx;
 	
 	public ControlView(Context context) {
 		super(context);
+		this.ctx = context;
 	}
 
 	private void init() {
@@ -48,6 +51,7 @@ public class ControlView extends FrameLayout implements OnClickListener, OnDrawe
 	    drawer.setOnDrawerOpenListener(this);
 	    drawer.setOnDrawerCloseListener(this);
 	    
+	    queue = (ImageButton)findViewById(R.id.StreamQueueView);
 	    prev = (ImageButton)findViewById(R.id.StreamPrevButton);
 	    play = (ImageButton)findViewById(R.id.StreamPlayButton);
 	    next = (ImageButton)findViewById(R.id.StreamNextButton);
@@ -56,6 +60,7 @@ public class ControlView extends FrameLayout implements OnClickListener, OnDrawe
 	    lengthText = (TextView) findViewById(R.id.StreamLengthText);
 	    lengthText.setText("");
 	    
+	    queue.setOnClickListener(this);
 	    prev.setOnClickListener(this);
 	    play.setOnClickListener(this);
 	    next.setOnClickListener(this);
@@ -108,6 +113,9 @@ public class ControlView extends FrameLayout implements OnClickListener, OnDrawe
 		ImageView iv = (ImageView)v;
 		
 		switch(v.getId()) {
+		case R.id.StreamQueueView:
+			ctx.startActivity(new Intent().setClass(ctx, QueueView.class));
+			return;
 		case R.id.StreamPlayButton:
 			if (isPlayerBound && mPlayer.isSongStarted()) {
 				if (mPlayer.isPlaying()) {
@@ -118,10 +126,12 @@ public class ControlView extends FrameLayout implements OnClickListener, OnDrawe
 					iv.setImageResource(android.R.drawable.ic_media_pause);
 				}
 			}
+			return;
 		case R.id.StreamNextButton:
 			if (isPlayerBound){
 				mPlayer.nextSong();
-		}
+			}
+			return;
 		case R.id.StreamPrevButton:
 			//TODO check if 10 seconds in or something and restart if > 10s
 			if (isPlayerBound){
@@ -209,12 +219,10 @@ public class ControlView extends FrameLayout implements OnClickListener, OnDrawe
 	}
 
 	public void onStartTrackingTouch(SeekBar seekBar) {
-		// TODO Auto-generated method stub
 		
 	}
 
 	public void onStopTrackingTouch(SeekBar seekBar) {
-		// TODO Auto-generated method stub
 		
 	}
 }

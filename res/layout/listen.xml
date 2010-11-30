@@ -57,6 +57,13 @@
       android:orientation="horizontal"
       android:gravity="center_horizontal">
       <ImageButton
+        android:id="@+id/StreamQueueView"
+        android:layout_width="wrap_content"
+        android:layout_marginRight="10dip"
+        android:src="@android:drawable/ic_menu_more"
+        android:scaleType="centerInside"
+        android:layout_height="48dip" />
+      <ImageButton
         android:id="@+id/StreamPrevButton"
         android:layout_width="wrap_content"
         android:layout_marginRight="10dip"

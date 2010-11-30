@@ -10,7 +10,9 @@
 		<item>Queue</item>
 		<item>Now Playing</item>
 	
-</string-array>
+	</string-array>
+	
+	<string name="queue_view">Up Next</string>
 	
 	<string name="fastscroll_index">ABCDEFGHIJKLMNOPQRSTUVWXYZ</string>
 	

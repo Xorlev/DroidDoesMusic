@@ -172,7 +172,7 @@ public class PlaylistManager {
 	
 
 	
-	//borrowed from http://efreedom.com/Question/1-3182937/Android-Create-Playlist
+	//borrowed from http://stackoverflow.com/questions/3182937
 	public void addToPlaylist(ContentResolver resolver, int audioId) {
 
         String[] cols = new String[] {
@@ -219,7 +219,7 @@ public class PlaylistManager {
 	 * @param position
 	 */
 	public void setPosition(int position) {
-		mPosition = position;	
+		mPosition = position;
 	}
 	/**
 	 * Sets the playlist we are using.
@@ -229,12 +229,12 @@ public class PlaylistManager {
 		mCurrentPlaylist = playlistId;
 	}
 
-	public boolean addToCurrentPlaylist(String datapath) {
-		Uri uri = MediaStore.Audio.Media.EXTERNAL_CONTENT_URI;
-		ContentResolver cr = context.getContentResolver();
-		Cursor cur = cr.query(Audio.Media.EXTERNAL_CONTENT_URI, STAR, Audio.Media.DATA +" LIKE '"+datapath+"'", null, null);
-		cur.moveToFirst();
-		int id=cur.getInt(cur.getColumnIndex(Audio.Media._ID));
+	public boolean addToCurrentPlaylist(int id) {
+//		Uri uri = MediaStore.Audio.Media.EXTERNAL_CONTENT_URI;
+//		ContentResolver cr = context.getContentResolver();
+//		Cursor cur = cr.query(Audio.Media.EXTERNAL_CONTENT_URI, STAR, null, null, null);
+//		cur.moveToFirst();
+//		int id2=cur.getInt(cur.getColumnIndex(Audio.Media._ID));
 		this.addToPlaylist(context.getContentResolver(), id);
 		return true;
 	}

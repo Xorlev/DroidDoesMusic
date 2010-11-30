@@ -40,9 +40,19 @@
 				<data android:mimeType="vnd.android.cursor.dir/ddm.track"/>
 			</intent-filter>
         </activity>
+        <activity android:name=".UI.QueueView" android:label="@string/app_name">
+        	<intent-filter>
+				<action android:name="android.intent.action.PICK" />
+				<category android:name="android.intent.category.DEFAULT" />
+			</intent-filter>
+        </activity>
+        
         <activity android:name=".UI.PlaylistSongView" android:label="@string/app_name">
 
         </activity>
+       
+        
+       
         <activity android:name=".UI.NowPlaying"
                   android:label="@string/app_name">
         </activity>

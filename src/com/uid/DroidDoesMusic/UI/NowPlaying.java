@@ -12,7 +12,6 @@ public class NowPlaying extends Activity {
 	@Override
     public void onCreate(Bundle savedInstanceState) {
         Log.d(TAG, getClass().getSimpleName() + ": onCreate");
-        
         super.onCreate(savedInstanceState);
         setContentView(R.layout.nowplaying);
               

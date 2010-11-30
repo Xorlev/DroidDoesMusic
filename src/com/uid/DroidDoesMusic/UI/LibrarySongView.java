@@ -101,7 +101,7 @@ public class LibrarySongView extends ListActivity {
 	@Override
 	public void onPause() {
         Log.d(TAG, getClass().getSimpleName() + ": onPause");
-		super.onResume();
+		super.onPause();
 		
 		unregisterReceiver(this.externalMediaListener);
 	}
@@ -363,6 +363,7 @@ public class LibrarySongView extends ListActivity {
 			}
 			return false;
 		}
+		
 		
         @Override
         public boolean onSingleTapConfirmed(MotionEvent e) {

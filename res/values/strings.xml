@@ -7,8 +7,10 @@
 		<item>Artists</item>
 		<item>Albums</item>
 		<item>Songs</item>
+		<item>Queue</item>
 		<item>Now Playing</item>
-	</string-array>
+	
+</string-array>
 	
 	<string name="fastscroll_index">ABCDEFGHIJKLMNOPQRSTUVWXYZ</string>
 	

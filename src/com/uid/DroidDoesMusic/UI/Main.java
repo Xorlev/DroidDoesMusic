@@ -16,7 +16,6 @@ import android.view.MenuItem;
 import android.view.ViewGroup;
 import android.view.ViewGroup.LayoutParams;
 import android.widget.TabHost;
-import android.widget.Toast;
 
 import com.uid.DroidDoesMusic.R;
 import com.uid.DroidDoesMusic.player.Player;
@@ -123,6 +122,14 @@ public class Main extends TabActivity {
         spec = tabHost.newTabSpec("library_songs")
         			  .setIndicator(tabs[3], res.getDrawable(R.drawable.ic_tab_playlist))
                       .setContent(intent);
+        tabHost.addTab(spec);
+        
+        //Queue 
+        
+        intent = new Intent().setClass(this, QueueView.class);
+        spec = tabHost.newTabSpec("queue_songs")
+        				.setIndicator(tabs[4], res.getDrawable(R.drawable.ic_tab_playlist))
+        				.setContent(intent);
         tabHost.addTab(spec);
 
         // Set current tab to Artists tab

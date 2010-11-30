@@ -118,6 +118,15 @@ public class ControlView extends FrameLayout implements OnClickListener, OnDrawe
 					iv.setImageResource(android.R.drawable.ic_media_pause);
 				}
 			}
+		case R.id.StreamNextButton:
+			if (isPlayerBound){
+				mPlayer.nextSong();
+		}
+		case R.id.StreamPrevButton:
+			//TODO check if 10 seconds in or something and restart if > 10s
+			if (isPlayerBound){
+				mPlayer.prevSong();
+			}
 			return;
 		}
 	}

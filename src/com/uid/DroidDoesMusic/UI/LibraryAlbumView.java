@@ -83,7 +83,7 @@ public class LibraryAlbumView extends ListActivity {
 	@Override
 	public void onPause() {
         Log.d(TAG, getClass().getSimpleName() + ": onPause");
-		super.onResume();
+		super.onPause();
 		
 		unregisterReceiver(this.externalMediaListener);
 	}
@@ -92,10 +92,7 @@ public class LibraryAlbumView extends ListActivity {
 	public void onListItemClick(ListView l, View v, int position, long id) {
 		Log.d(TAG, getClass().getSimpleName() + ": onListItemClick: (" + id + ")");
 		super.onListItemClick(l, v, position, id);
-		
 		cur.moveToPosition(position);
-
-
 		
 		Intent i = new Intent(Intent.ACTION_PICK);
 		i.setDataAndType(Uri.EMPTY, "vnd.android.cursor.dir/ddm.track");
@@ -203,7 +200,7 @@ public class LibraryAlbumView extends ListActivity {
 		}
 	}
 	
-	private static class AlbumListAdapter extends SimpleCursorAdapter implements SectionIndexer {
+	public static class AlbumListAdapter extends SimpleCursorAdapter implements SectionIndexer {
 		private AlphabetIndexer mIndexer;
 		private final Resources mResources;
 		private static final HashMap<Long, Drawable> artCache = new HashMap<Long, Drawable>();

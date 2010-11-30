@@ -293,7 +293,7 @@ public class Player extends Service implements OnCompletionListener {
 		}
 	}
 	
-	private class Song {
+	public class Song {
 		public String artist;
 		public String album;
 		public String title;
@@ -306,5 +306,13 @@ public class Player extends Service implements OnCompletionListener {
 			this.datapath = datapath;
 		}
 		
+	}
+
+	public Object[] getQueues() {
+		return songQueue.toArray();
+	}
+	public Song[] getQueue() {
+		
+		return (Song[]) songQueue.toArray();
 	}
 }

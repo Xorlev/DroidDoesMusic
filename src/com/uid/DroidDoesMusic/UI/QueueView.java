@@ -44,8 +44,6 @@ public class QueueView extends ListActivity {
 		
 		Log.d(TAG, getClass().getSimpleName() + ": onResume: pre populate()");
         bind();
-    	//Log.d(TAG, "ZOOOOOOMMMMMFFFFFFFFGGGGGGGG" + mPlayer.getQueue().toString());
-    	//this.setListAdapter(new ArrayAdapter<Song>(this, android.R.layout.simple_list_item_1, mPlayer.getQueue()));
 	}
 	
 	@Override
@@ -62,7 +60,6 @@ public class QueueView extends ListActivity {
         	try {
 				this.setListAdapter(new ArrayAdapter<Song>(this, android.R.layout.simple_list_item_1, mPlayer.getQueue()));
 			} catch (NullPointerException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
         }
@@ -87,7 +84,6 @@ public class QueueView extends ListActivity {
 			mPlayer = player;
 			isPlayerBound = true;
 			populate();
-			
 			getBaseContext().registerReceiver(trackChangeReceiver, new IntentFilter(com.uid.DroidDoesMusic.player.Player.SERVICE_CHANGE_NAME));
 		}
 		public void onServiceDisconnected(ComponentName classname) {

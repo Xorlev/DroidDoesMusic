@@ -48,6 +48,7 @@ public class PlaylistSongView extends ListActivity {
 		}            
 		PlaylistManager.getInstance(this).setPlaylistId(playlistId);
 		mAdapter = PlaylistManager.getInstance(this).listSongs(playlistId);
+		
 		this.setListAdapter(mAdapter);
 
 	}

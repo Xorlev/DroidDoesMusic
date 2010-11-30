@@ -46,6 +46,7 @@ public class PlaylistSongView extends ListActivity {
 		} catch (NullPointerException e) {
 			playlistName = "";
 		}            
+		PlaylistManager.getInstance(this).setPlaylistId(playlistId);
 		mAdapter = PlaylistManager.getInstance(this).listSongs(playlistId);
 		this.setListAdapter(mAdapter);
 
@@ -56,21 +57,21 @@ public class PlaylistSongView extends ListActivity {
 		Log.d(TAG, getClass().getSimpleName() + ": onListItemClick: (" + id + ")");
 		super.onListItemClick(l, v, position, id);
 
-		mPlaylistManager.setSelectedPlaylist(playlistId);
+		
 		mPlaylistManager.setPosition(position);
 		HashMap<String,String> info = mPlaylistManager.currentSong();
 		
-		if(mPlaylistManager.addToCurrentPlaylist(info.get(PlaylistManager.DATAPATH))){
-			
-		}
+		mPlaylistManager.addToPlaylist(this.getContentResolver(), Integer.parseInt(info.get(PlaylistManager.ID)));
 		
-		
-		
-		/*Toast.makeText(this,info.get(PlaylistManager.ARTIST), Toast.LENGTH_SHORT).show();
+		/*Toast.makeText(this,info.get(PlaylistManager.ID), Toast.LENGTH_SHORT).show();
+
+		Toast.makeText(this,info.get(PlaylistManager.ARTIST), Toast.LENGTH_SHORT).show();
 		Toast.makeText(this,info.get(PlaylistManager.ALBUM), Toast.LENGTH_SHORT).show();
 		Toast.makeText(this,info.get(PlaylistManager.TITLE), Toast.LENGTH_SHORT).show();
 		Toast.makeText(this,info.get(PlaylistManager.DATAPATH), Toast.LENGTH_SHORT).show();
 		info = mPlaylistManager.nextSong();
+		
+		
 		if (info!=null){
 			Toast.makeText(this, "Next song:", Toast.LENGTH_SHORT).show();
 			Toast.makeText(this,info.get(PlaylistManager.ARTIST), Toast.LENGTH_SHORT).show();

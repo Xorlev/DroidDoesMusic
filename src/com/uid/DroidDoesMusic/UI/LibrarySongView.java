@@ -239,10 +239,8 @@ public class LibrarySongView extends ListActivity {
     private ServiceConnection mConnection = new ServiceConnection() {
     	public void onServiceConnected(ComponentName classname, IBinder service){
     		Log.d(TAG, "onServiceConnected: Player Service Connected" + classname.toShortString());
-    		
     		Player player = ((Player.DataBinder)service).getService();
     		mPlayer = player;
-    		    		
     		isPlayerBound = true;
     	}
     	public void onServiceDisconnected(ComponentName classname){
@@ -255,13 +253,10 @@ public class LibrarySongView extends ListActivity {
 	private static class SongListAdapter extends SimpleCursorAdapter implements SectionIndexer {
 		private AlphabetIndexer mIndexer;
 		private final Resources mResources;
-		
 		public SongListAdapter(Context context, int layout, Cursor c, String[] from, int[] to) {
 			super(context, layout, c, from, to);
-			
 			// Get resources for use later
 			mResources = context.getResources();
-			
 			try {
 				// Fire up an AlphabetIndexer for ListView fastscroll
 				mIndexer = new AlphabetIndexer(c, c.getColumnIndex(Audio.Media.TITLE), mResources.getString(R.string.fastscroll_index));

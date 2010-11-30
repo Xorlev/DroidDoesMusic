@@ -4,18 +4,16 @@ import android.app.ListActivity;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
-import android.content.IntentFilter;
 import android.content.ServiceConnection;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.IBinder;
 import android.util.Log;
-import android.widget.ArrayAdapter;
 import android.widget.TextView;
-
 import com.uid.DroidDoesMusic.R;
 import com.uid.DroidDoesMusic.player.Player;
 import com.uid.DroidDoesMusic.player.Player.Song;
+
 /**
  * This class should contain the songs in the queue 
  * 
@@ -43,10 +41,8 @@ public class QueueView extends ListActivity {
 		super.onResume();
 		//mQueue = mPlayer.getQueue();
     	populate();
-    	Log.d(TAG, "ZOMMMMMMMFFFFGGGGGG");
     	//Log.d(TAG, "ZOOOOOOMMMMMFFFFFFFFGGGGGGGG" + mPlayer.getQueue().toString());
     	//this.setListAdapter(new ArrayAdapter<Song>(this, android.R.layout.simple_list_item_1, mPlayer.getQueue()));
-	
 	}
 	
 	private void populate() {
@@ -56,7 +52,6 @@ public class QueueView extends ListActivity {
         }		
 	}
 
-	
 	public void getData(String[] displayColumns, int[] display, String sort, int layout){
 		populated = true;
 	}
@@ -75,16 +70,13 @@ public class QueueView extends ListActivity {
 	    private ServiceConnection mConnection = new ServiceConnection() {
 	    	public void onServiceConnected(ComponentName classname, IBinder service){
 	    		Log.d(TAG, "onServiceConnected: Player Service Connected" + classname.toShortString());
-	    		
 	    		Player player = ((Player.DataBinder)service).getService();
 	    		mPlayer = player;
-	    		    		
 	    		isPlayerBound = true;
 	    		
 	    	}
 	    	public void onServiceDisconnected(ComponentName classname){
 	    		Log.d(TAG, "onServiceDisconnected: Player Service Disconnected");
-	    		
 	    		isPlayerBound = false;
 	    	}
 	    };

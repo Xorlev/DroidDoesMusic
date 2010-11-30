@@ -30,6 +30,7 @@ import android.widget.Toast;
 import com.uid.DroidDoesMusic.R;
 import com.uid.DroidDoesMusic.UI.SimpleGestureFilter.SimpleGestureListener;
 import com.uid.DroidDoesMusic.player.Player;
+import com.uid.DroidDoesMusic.util.PlaylistManager;
 
 public class LibrarySongView extends ListActivity implements SimpleGestureListener {
 	protected static final String TAG = "DroidDoesMusic";
@@ -44,6 +45,7 @@ public class LibrarySongView extends ListActivity implements SimpleGestureListen
 	
 	private boolean isPlayerBound = false;
 	private Player mPlayer;
+	private PlaylistManager pm;
 	
 	private SimpleGestureFilter detector; 
 	
@@ -75,6 +77,9 @@ public class LibrarySongView extends ListActivity implements SimpleGestureListen
         detector = new SimpleGestureFilter(this,this);
         detector.setMode(SimpleGestureFilter.MODE_DYNAMIC);
         detector.setEnabled(true);
+        
+        pm = PlaylistManager.getInstance(this);
+        
         // Populate ListView
         bind();
         populateDataIfReady();
@@ -98,11 +103,14 @@ public class LibrarySongView extends ListActivity implements SimpleGestureListen
 			String artist = cur.getString(cur.getColumnIndex(Audio.Media.ARTIST));
 			String album = cur.getString(cur.getColumnIndex(Audio.Media.ALBUM));
 			String title = cur.getString(cur.getColumnIndex(Audio.Media.TITLE));
-			String dataPath = cur.getString(cur.getColumnIndex(Audio.Media.DATA));
+			String datapath = cur.getString(cur.getColumnIndex(Audio.Media.DATA));
 
 			str = artist + " - " + title;
 
-			Toast.makeText(this, str, Toast.LENGTH_SHORT).show();
+			if (pm.addToCurrentPlaylist(datapath)) {
+				Toast.makeText(this, "Added " + str + " to playlist", Toast.LENGTH_SHORT).show();
+			}
+			
 			break;
 		case SimpleGestureFilter.SWIPE_LEFT:
 			break;

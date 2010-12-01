@@ -204,7 +204,7 @@ public class PlaylistManager {
         Toast.makeText(context,"uri path just added song: "+uri.getPath(), Toast.LENGTH_SHORT).show();
     }
 
-   public static void removeFromPlaylist(ContentResolver resolver, int audioId) {
+   public void removeFromPlaylist(ContentResolver resolver, int audioId) {
        Log.v("made it to add",""+audioId);
         String[] cols = new String[] {
                 "count(*)"
@@ -249,6 +249,11 @@ public class PlaylistManager {
 //		cur.moveToFirst();
 //		int id2=cur.getInt(cur.getColumnIndex(Audio.Media._ID));
 		this.addToPlaylist(context.getContentResolver(), id);
+		return true;
+	}
+	
+	public boolean removeFromCurrentPlaylist(int id) {
+		this.removeFromPlaylist(context.getContentResolver(), id);
 		return true;
 	}
 

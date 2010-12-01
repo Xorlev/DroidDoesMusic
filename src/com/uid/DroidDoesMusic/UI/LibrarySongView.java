@@ -101,25 +101,27 @@ public class LibrarySongView extends ListActivity implements SimpleGestureListen
 	public void onSwipe(int direction, int x, int y) {
 		String str = "";
 
+		int pos = getListView().pointToPosition(x, y);
+		cur.moveToPosition(pos);
+
+		int id = cur.getInt(cur.getColumnIndex(Audio.Media._ID));
+		String artist = cur.getString(cur.getColumnIndex(Audio.Media.ARTIST));
+		String title = cur.getString(cur.getColumnIndex(Audio.Media.TITLE));
+
+		str = artist + " - " + title;
+		
 		switch (direction) {
-
 		case SimpleGestureFilter.SWIPE_RIGHT:
-			int pos = getListView().pointToPosition(x, y);
-			cur.moveToPosition(pos);
-
-			int id = cur.getInt(cur.getColumnIndex(Audio.Media._ID));
-			String artist = cur.getString(cur.getColumnIndex(Audio.Media.ARTIST));
-			String title = cur.getString(cur.getColumnIndex(Audio.Media.TITLE));
-			String datapath = cur.getString(cur.getColumnIndex(Audio.Media.DATA));
-
-			str = artist + " - " + title;
-
 			if (pm.addToCurrentPlaylist(id)) {
 				Toast.makeText(this, "Added " + str + " to playlist", Toast.LENGTH_SHORT).show();
 			}
 			
 			break;
 		case SimpleGestureFilter.SWIPE_LEFT:
+			if (pm.removeFromCurrentPlaylist(id)) {
+				Toast.makeText(this, "Removed " + str + " from playlist", Toast.LENGTH_SHORT).show();
+			}
+			
 			break;
 		}
 

@@ -58,6 +58,7 @@ public class QueueView extends ListActivity {
         	tv.setText(getResources().getString(R.string.no_sd_card));
         } else {
         	try {
+        		// TODO SectionListAdapter for current song, queue, and then playlist
 				this.setListAdapter(new ArrayAdapter<Song>(this, android.R.layout.simple_list_item_1, mPlayer.getQueue()));
 			} catch (NullPointerException e) {
 				e.printStackTrace();

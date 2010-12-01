@@ -57,6 +57,7 @@ public class Player extends Service implements OnCompletionListener {
 		return START_STICKY;
 	}
 	
+	
 	@Override
 	public void onDestroy(){
 		super.onDestroy();
@@ -73,6 +74,8 @@ public class Player extends Service implements OnCompletionListener {
 		}
 		
 	}
+	
+	
 	
 	public void onCompletion(MediaPlayer mp) {
 		nextSong();
@@ -167,11 +170,29 @@ public class Player extends Service implements OnCompletionListener {
 				public void run() { 
 					startMusic(); 
 				}}, 1000);
+		} else {
+			// TODO playlist next song
+			stopMusic();
 		}
 	}
 	
 	public void prevSong() {
-		
+		if (mp.getCurrentPosition() != 0 && mp.getDuration() > 10000 && mp.getCurrentPosition() < 10000) {
+			// Pause the song
+			pauseMusic();
+			
+			// Seek to beginning
+			seek(0);
+			
+			// Delay start by a second to allow for second click (mp.getCurrentPosition() != 0)
+			new Handler().postDelayed(new Runnable() { 
+				public void run() { 
+					startMusic(); 
+				}}, 1000);
+		} else {
+			// TODO playlist previous song
+			stopMusic();
+		}
 	}
 	
 	public void enqueueFirst(String artist, String album, String title, String dataPath) {
@@ -315,10 +336,6 @@ public class Player extends Service implements OnCompletionListener {
 			return artist + " - " + title;
 		}
 		
-	}
-
-	public Object[] getQueues() {
-		return songQueue.toArray();
 	}
 	
 	public LinkedList<Song> getQueue() {

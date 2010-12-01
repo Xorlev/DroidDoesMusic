@@ -133,7 +133,6 @@ public class ControlView extends FrameLayout implements OnClickListener, OnDrawe
 			}
 			return;
 		case R.id.StreamPrevButton:
-			//TODO check if 10 seconds in or something and restart if > 10s
 			if (isPlayerBound){
 				mPlayer.prevSong();
 			}

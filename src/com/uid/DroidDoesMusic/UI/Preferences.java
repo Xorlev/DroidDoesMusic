@@ -1,11 +1,6 @@
 package com.uid.DroidDoesMusic.UI;
 
-import java.util.List;
-
-import android.content.Context;
-import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.content.pm.ResolveInfo;
 import android.os.Bundle;
 import android.preference.Preference;
 import android.preference.PreferenceActivity;
@@ -25,6 +20,10 @@ public class Preferences extends PreferenceActivity {
 		addPreferencesFromResource(R.xml.settings);
 		
 		checkLastFm();
+	}
+	
+	public void onResume(){
+		super.onResume();
 	}
 	
 	public void checkLastFm() {

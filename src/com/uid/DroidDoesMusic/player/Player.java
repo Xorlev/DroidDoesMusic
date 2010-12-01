@@ -28,6 +28,8 @@ public class Player extends Service implements OnCompletionListener {
 	public static final String SERVICE_UPDATE_NAME = SERVICE_PREFIX + "UPDATE";
 	public static final String SERVICE_STOP_NAME = SERVICE_PREFIX + "STOP";
 	
+	private static final int MSG_TYPE_QUEUE = 0;
+	
 	private final IBinder mBinder = new DataBinder();
 	private MediaPlayer mp = new MediaPlayer();
 	private Handler mHandler = new Handler();
@@ -197,11 +199,9 @@ public class Player extends Service implements OnCompletionListener {
 	
 	public void enqueueFirst(String artist, String album, String title, String dataPath) {
 		songQueue.addFirst(new Song(artist, album, title, dataPath));
-		
 		if (!mp.isPlaying() && !isSongStarted) {
 			nextSong();
 		}
-		
 		Toast.makeText(this, title + " " + getResources().getString(R.string.enqueue_first_success), Toast.LENGTH_SHORT).show();
 	}
 	

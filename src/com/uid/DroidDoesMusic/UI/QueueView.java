@@ -9,10 +9,13 @@ import android.content.IntentFilter;
 import android.content.ServiceConnection;
 import android.os.Bundle;
 import android.os.Environment;
+import android.os.Handler;
 import android.os.IBinder;
+import android.os.Message;
 import android.util.Log;
 import android.widget.ArrayAdapter;
 import android.widget.TextView;
+
 import com.uid.DroidDoesMusic.R;
 import com.uid.DroidDoesMusic.player.Player;
 import com.uid.DroidDoesMusic.player.Player.Song;

@@ -10,7 +10,6 @@ import android.util.Log;
 import android.view.View;
 import android.widget.ListAdapter;
 import android.widget.ListView;
-import android.widget.Toast;
 
 import com.uid.DroidDoesMusic.util.PlaylistManager;
 
@@ -52,7 +51,10 @@ public class PlaylistSongView extends ListActivity {
 		this.setListAdapter(mAdapter);
 
 	}
-
+	@Override
+	public void onResume(){
+		super.onResume();
+	}
 	@Override
 	public void onListItemClick(ListView l, View v, int position, long id) {
 		Log.d(TAG, getClass().getSimpleName() + ": onListItemClick: (" + id + ")");

@@ -238,7 +238,7 @@ public class Player extends Service implements OnCompletionListener {
 		CharSequence contentTitle = title;
 		String contentText = artist;
 		
-		Notification notification = new Notification(android.R.drawable.ic_media_play, contentText, System.currentTimeMillis());
+		Notification notification = new Notification(R.drawable.icon, contentText, System.currentTimeMillis());
 		notification.flags = Notification.FLAG_NO_CLEAR
 				| Notification.FLAG_ONGOING_EVENT;
 		Context c = getApplicationContext();

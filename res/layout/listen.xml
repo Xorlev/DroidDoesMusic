@@ -18,11 +18,12 @@
       android:layout_gravity="center" android:src="@drawable/arrow_up" android:id="@+id/DrawerArrowImage"/>
     <TextView
       android:id="@+id/StreamTextView"
-      android:layout_width="wrap_content"
+      android:layout_width="fill_parent"
       android:layout_height="wrap_content"
       android:text="@string/msg_listen_nothing"
       android:textStyle="italic"
-      android:layout_gravity="left|center_vertical"
+      android:textColor="@android:color/primary_text_light"
+      android:layout_gravity="right|center_vertical"
       android:ellipsize="marquee" android:singleLine="true"/>
   </LinearLayout>
   <LinearLayout

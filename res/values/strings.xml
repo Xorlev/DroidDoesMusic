@@ -12,6 +12,9 @@
 	
 	</string-array>
 	
+	<string name="about_title">About DroidDoesMusic</string>
+	<string name="about_text">DroidDoesMusic is a music app aiming to bring the power of gestures to the traditional music app world. DDM is written by Nick Hansen, Michael Rose, and Joe Zeimen.</string>
+	
 	<string name="queue_view">Up Next</string>
 	
 	<string name="fastscroll_index">ABCDEFGHIJKLMNOPQRSTUVWXYZ</string>
@@ -29,6 +32,9 @@
 	<string name="settings_label">Settings</string>
 	<string name="settings_title">DDM Settings</string>
 	<string name="settings_shortcut">s</string>
+	
+	<string name="about_label">About</string>
+	<string name="about_shortcut">a</string>
 	
 	<string name="quit_label">Quit</string>
 	<string name="quit_shortcut">q</string>

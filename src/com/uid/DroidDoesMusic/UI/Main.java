@@ -1,5 +1,6 @@
 package com.uid.DroidDoesMusic.UI;
 
+import android.app.Dialog;
 import android.app.TabActivity;
 import android.content.ComponentName;
 import android.content.Context;
@@ -62,6 +63,9 @@ public class Main extends TabActivity {
     	switch (item.getItemId()) {
     	case R.id.settings:
     		startActivity(new Intent(this, Preferences.class));
+    		return true;
+    	case R.id.about:
+    		startActivity(new Intent(this, About.class));
     		return true;
 		case R.id.quit:
 			stopService(new Intent("com.uid.DroidDoesMusic.player.Player"));

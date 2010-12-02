@@ -107,11 +107,21 @@ public class PlaylistManager {
 		int layout = android.R.layout.simple_list_item_1;
 		int[] display = new int[] { android.R.id.text1};
 		Uri membersUri = MediaStore.Audio.Playlists.Members.getContentUri("external", playlistId);
-		mCur = cr.query(membersUri, STAR, null, null, Audio.Media.DEFAULT_SORT_ORDER);
+		mCur = cr.query(membersUri, STAR, null, null, Audio.Playlists.Members.DEFAULT_SORT_ORDER);
 		adapter = new SimpleCursorAdapter(context,layout,mCur,displayColumns,display);
 		return adapter;
 	}
-
+	
+	public int getSongIdAtPosition(int pos){
+		int old = mCur.getPosition();
+		int id=-1;
+		if (mCur.moveToPosition(pos)){
+			id = mCur.getInt(mCur.getColumnIndex(Audio.Playlists.Members.AUDIO_ID));
+		}
+		mCur.moveToPosition(old);
+		return id;
+	}
+	
 	public void setPlaylistId(int playlistId){
 		PlaylistManager.mCurrentPlaylist = playlistId;
 		
@@ -201,11 +211,11 @@ public class PlaylistManager {
         values.put(MediaStore.Audio.Playlists.Members.PLAY_ORDER, base+audioId);
         values.put(MediaStore.Audio.Playlists.Members.AUDIO_ID, audioId);
         uri=resolver.insert(uri, values);
-        Toast.makeText(context,"uri path just added song: "+uri.getPath(), Toast.LENGTH_SHORT).show();
+        
     }
 
-   public void removeFromPlaylist(ContentResolver resolver, int audioId) {
-       Log.v("made it to add",""+audioId);
+   public boolean removeFromPlaylist(ContentResolver resolver, int audioId) {
+       
         String[] cols = new String[] {
                 "count(*)"
         };
@@ -215,8 +225,8 @@ public class PlaylistManager {
         final int base = cur.getInt(0);
         cur.close();
         ContentValues values = new ContentValues();
-
-        resolver.delete(uri, MediaStore.Audio.Playlists.Members.AUDIO_ID +" = "+audioId, null);
+        Toast.makeText(context,"uri path just added song: "+uri.getPath(), Toast.LENGTH_SHORT).show();
+        return 0<resolver.delete(uri, MediaStore.Audio.Playlists.Members.AUDIO_ID +" = "+audioId, null);
     }
 	
 	
@@ -253,8 +263,12 @@ public class PlaylistManager {
 	}
 	
 	public boolean removeFromCurrentPlaylist(int id) {
-		this.removeFromPlaylist(context.getContentResolver(), id);
-		return true;
+		return removeFromPlaylist(context.getContentResolver(), id);
+	}
+
+	public int getCurrentPlaylistId() {
+		// TODO Auto-generated method stub
+		return this.mCurrentPlaylist;
 	}
 
 

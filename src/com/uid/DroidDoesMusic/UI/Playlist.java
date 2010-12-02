@@ -39,7 +39,6 @@ public class Playlist extends ListActivity {
 		Log.d(TAG, getClass().getSimpleName() + ": onListItemClick: (" + id + ")");
 		super.onListItemClick(l, v, position, id);
 		
-		this.setListAdapter(PlaylistManager.getInstance(this).listSongs(position));
 		Log.d(TAG,"Position: "+position);
 		Cursor c = (Cursor)mAdapter.getItem(position);
 		Log.d(TAG,"Cursor to string:"+c.toString());

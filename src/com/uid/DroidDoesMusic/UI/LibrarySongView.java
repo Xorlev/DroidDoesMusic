@@ -128,7 +128,7 @@ public class LibrarySongView extends ListActivity implements SimpleGestureListen
 	}
 
 	public void onDoubleTap() {
-		  Toast.makeText(this, "Double Tap", Toast.LENGTH_SHORT).show(); 
+		  
 	}
 	
 	@Override

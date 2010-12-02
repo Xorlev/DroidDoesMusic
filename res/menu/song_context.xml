@@ -1,11 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
-	<item android:id="@+id/settings"
-		android:title="@string/settings_label"
-		android:icon="@android:drawable/ic_menu_preferences"
-		android:alphabeticShortcut="@string/settings_shortcut" />
-	<item android:id="@+id/quit"
-		android:title="@string/quit_label"
-		android:icon="@android:drawable/ic_menu_close_clear_cancel"
-		android:alphabeticShortcut="@string/quit_shortcut" />
+	<item android:id="@+id/song_enqueue_next"
+		android:title="@string/ctx_enqueue" />
+	<item android:id="@+id/song_add_playlist"
+		android:title="@string/ctx_add_playlist" />
+	<item android:id="@+id/song_play"
+		android:title="@string/ctx_play" />
 </menu>

@@ -167,9 +167,8 @@ public class LibrarySongView extends ListActivity implements SimpleGestureListen
 		String dataPath = cur.getString(cur.getColumnIndex(Audio.Media.DATA));
 		
 		if (isPlayerBound) {
-			//mPlayer.stopMusic();
-			//mPlayer.setSong(artist, album, title, dataPath);
-			mPlayer.enqueueLast(artist, album, title, dataPath);
+			mPlayer.stopMusic();
+			mPlayer.setSong(artist, album, title, dataPath);
 			mPlayer.startMusic();
 		}
 	}
@@ -192,7 +191,32 @@ public class LibrarySongView extends ListActivity implements SimpleGestureListen
 	public boolean onContextItemSelected(MenuItem menuitem) {
 		AdapterContextMenuInfo info = (AdapterContextMenuInfo)menuitem.getMenuInfo();
 		
-		Object item = getListAdapter().getItem(info.position);
+		cur.moveToPosition(info.position);
+		
+		int songId = cur.getInt(cur.getColumnIndex(Audio.Media._ID));
+		String artist = cur.getString(cur.getColumnIndex(Audio.Media.ARTIST));
+		String album = cur.getString(cur.getColumnIndex(Audio.Media.ALBUM));
+		String title = cur.getString(cur.getColumnIndex(Audio.Media.TITLE));
+		String dataPath = cur.getString(cur.getColumnIndex(Audio.Media.DATA));
+		
+		if (isPlayerBound) {
+			switch(menuitem.getItemId()) {
+			case R.id.song_enqueue_next:
+				mPlayer.enqueueLast(artist, album, title, dataPath);
+				break;
+			case R.id.song_add_playlist:
+				if (pm.addToCurrentPlaylist(songId)) {
+					String str = artist + " - " + title;
+					Toast.makeText(this, "Added " + str + " to playlist", Toast.LENGTH_SHORT).show();
+				}
+				break;
+			case R.id.song_play:
+				mPlayer.stopMusic();
+				mPlayer.setSong(artist, album, title, dataPath);
+				mPlayer.startMusic();
+				break;
+			}
+		}
 		
 		return true;
 	}

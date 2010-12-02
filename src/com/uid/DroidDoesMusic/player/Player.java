@@ -293,7 +293,7 @@ public class Player extends Service implements OnCompletionListener {
 				i.putExtra("artist", artist);
 				i.putExtra("album", album);
 				i.putExtra("track", track);
-				i.putExtra("duration", duration);
+				i.putExtra("duration", (long)duration);
 				context.sendBroadcast(i);
 			}
 		}

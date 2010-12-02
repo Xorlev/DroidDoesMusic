@@ -29,7 +29,7 @@
         
         android:singleLine="true"
         android:ellipsize="marquee"
-        android:text="Simple application that shows how to use RelativeLayout" 
+        android:text="" 
         android:textAppearance="?android:attr/textAppearanceSmall" />
 
     <TextView

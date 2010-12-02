@@ -291,7 +291,12 @@ public class LibraryAlbumView extends ListActivity {
 					}
 				}
 			}
-			d.setDither(false);
+			
+			if (d != null) {
+				d.setDither(false);
+			} else {
+				d = mResources.getDrawable(R.drawable.icon);
+			}
 			
 			// Get artist name, set "unknown" if missing
 			String artistName = c.getString(c.getColumnIndex(Audio.Albums.ARTIST));

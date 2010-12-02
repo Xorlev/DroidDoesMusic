@@ -134,6 +134,7 @@ public class Player extends Service implements OnCompletionListener {
 			
 				lbm.startTrack(artist, album, title, mp.getDuration());
 			} else {
+				Log.d(TAG, "Player: lbm->playbackResumed");
 				lbm.playbackResumed(artist, album, title, mp.getDuration(), mp.getCurrentPosition());
 			}
 				
@@ -265,12 +266,15 @@ public class Player extends Service implements OnCompletionListener {
 		String contentText = artist;
 		
 		Notification notification = new Notification(R.drawable.icon, contentText, System.currentTimeMillis());
-		notification.flags = Notification.FLAG_NO_CLEAR
-				| Notification.FLAG_ONGOING_EVENT;
+		notification.flags = Notification.FLAG_NO_CLEAR | Notification.FLAG_ONGOING_EVENT;
+		
 		Context c = getApplicationContext();
+		
 		Intent notificationIntent = new Intent(this, com.uid.DroidDoesMusic.UI.Main.class);
 		PendingIntent contentIntent = PendingIntent.getActivity(c, 0, notificationIntent, PendingIntent.FLAG_CANCEL_CURRENT);
+		
 		notification.setLatestEventInfo(c, contentTitle, contentText, contentIntent);
+
 		mNotificationManager.notify(1, notification);
 	}
 	

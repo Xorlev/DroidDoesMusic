@@ -1,6 +1,5 @@
 package com.uid.DroidDoesMusic.UI;
 
-import java.io.FileNotFoundException;
 import java.util.HashMap;
 
 import android.app.ListActivity;
@@ -13,6 +12,8 @@ import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Matrix;
+import android.graphics.Point;
+import android.graphics.PointF;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
@@ -21,17 +22,16 @@ import android.os.Environment;
 import android.os.Handler;
 import android.provider.MediaStore;
 import android.provider.MediaStore.Audio;
-import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AlphabetIndexer;
 import android.widget.ImageView;
+import android.widget.ImageView.ScaleType;
 import android.widget.ListView;
 import android.widget.SectionIndexer;
 import android.widget.SimpleCursorAdapter;
 import android.widget.TextView;
-import android.widget.ImageView.ScaleType;
 
 import com.uid.DroidDoesMusic.R;
 
@@ -300,11 +300,14 @@ public class LibraryAlbumView extends ListActivity {
 	}
 	
 	private static class ArtRender {
-		private static Resources mResources;
 		private static ArtRender single;
-		private static Matrix scaleMatrix;
+		
+		private static Resources mResources;
+		private static final HashMap<Point, Matrix> matrixCache = new HashMap<Point, Matrix>(5);
 		private static BitmapDrawable defaultDrawable;
 		private static final HashMap<Long, BitmapDrawable> artCache = new HashMap<Long, BitmapDrawable>(25);
+		
+		private final static int defaultIconResourceId = R.drawable.icon;
 		
 		private ArtRender(Resources mResources) {
 			ArtRender.mResources = mResources;
@@ -322,7 +325,7 @@ public class LibraryAlbumView extends ListActivity {
 			BitmapDrawable d;
 			
 			if (defaultDrawable == null) {
-				d = new BitmapDrawable(BitmapFactory.decodeResource(mResources, R.drawable.icon));
+				defaultDrawable = resizeBitmap(BitmapFactory.decodeResource(mResources, defaultIconResourceId));
 			}
 			
 			if (art == null || art.length() == 0) {
@@ -333,30 +336,8 @@ public class LibraryAlbumView extends ListActivity {
 				} else {
 					try {
 						Bitmap orig = BitmapFactory.decodeFile(art);
-						// Convert the dips to pixels
-						final float scale = mResources.getDisplayMetrics().density;
-						Log.d(TAG, String.valueOf(scale));
-						
-						int w = orig.getWidth();
-						int h = orig.getHeight();
-						final int newWidth = 64; // dip
-						final int newHeight = 64;
-						
-						float scaleWidth = (float)newWidth/w * scale * scale;
-						float scaleHeight = (float)newHeight/h * scale * scale;
-						
-						Log.d(TAG, String.valueOf(scaleWidth));
-						Log.d(TAG, String.valueOf(scaleHeight));
-						
-						Matrix m = new Matrix();
-						m.postScale(scaleWidth, scaleHeight);
-						
-	
-						Bitmap resized = Bitmap.createBitmap(orig, 0, 0, w, h, m, true);
-						d = new BitmapDrawable(resized);
-						//d = bmd;
-						
-						//d = Drawable.createFromPath(art);
+
+						d = resizeBitmap(orig);
 						artCache.put(albumId, d);
 					} catch (Exception e) {
 						e.printStackTrace();
@@ -372,6 +353,34 @@ public class LibraryAlbumView extends ListActivity {
 			}
 			
 			return d;
+		}
+		
+		private static BitmapDrawable resizeBitmap(Bitmap orig) {
+			final float scale = mResources.getDisplayMetrics().density;
+			Log.d(TAG, String.valueOf(scale));
+			
+			int w = orig.getWidth();
+			int h = orig.getHeight();
+			Point pair = new Point(w, h);
+			
+			Matrix m;
+			
+			if (matrixCache.containsKey(pair)) {
+				m = matrixCache.get(pair);
+			} else {
+				final int newWidth = 64; // dip
+				final int newHeight = 64;
+				// Convert the dips to pixels
+				float scaleWidth = (float)newWidth/w * scale * scale;
+				float scaleHeight = (float)newHeight/h * scale * scale;
+				
+				m = new Matrix();
+				m.postScale(scaleWidth, scaleHeight);
+			}
+			
+
+			Bitmap resized = Bitmap.createBitmap(orig, 0, 0, w, h, m, true);
+			return new BitmapDrawable(resized);
 		}
 	}
 }

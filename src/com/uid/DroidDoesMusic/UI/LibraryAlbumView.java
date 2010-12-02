@@ -210,7 +210,6 @@ public class LibraryAlbumView extends ListActivity {
 	public static class AlbumListAdapter extends SimpleCursorAdapter implements SectionIndexer {
 		private AlphabetIndexer mIndexer;
 		private final Resources mResources;
-		private static final HashMap<Long, Drawable> artCache = new HashMap<Long, Drawable>(25);
 		
 		public AlbumListAdapter(Context context, int layout, Cursor c, String[] from, int[] to) {
 			super(context, layout, c, from, to);
@@ -255,48 +254,9 @@ public class LibraryAlbumView extends ListActivity {
 			// Get album icon
 			Drawable d;
 			String art = c.getString(c.getColumnIndex(MediaStore.Audio.Albums.ALBUM_ART));
-			if (art == null || art.length() == 0) {
-				d = mResources.getDrawable(R.drawable.icon);
-			} else {
-				if (artCache.containsKey(albumId)) {
-					d = artCache.get(albumId);
-				} else {
-					try {
-						Bitmap orig = BitmapFactory.decodeFile(art);
-						int w = orig.getWidth();
-						int h = orig.getHeight();
-						final int newWidth = 72;
-						final int newHeight = 72;
-						
-						// Convert the dips to pixels
-						final float scale = mResources.getDisplayMetrics().density;
-						
-						
-						
-						float scaleWidth = (float)newWidth/w * scale;
-						float scaleHeight = (float)newHeight/h * scale;
-						
-						Matrix m = new Matrix();
-						m.postScale(scaleWidth, scaleHeight);
-						
 	
-						Bitmap resized = Bitmap.createBitmap(orig, 0, 0, w, h, m, true);
-						d = new BitmapDrawable(resized);
-						//d = bmd;
-						
-						//d = Drawable.createFromPath(art);
-						artCache.put(albumId, d);
-					} catch (Exception e) {
-						d = mResources.getDrawable(R.drawable.icon);
-					}
-				}
-			}
-			
-			if (d != null) {
-				d.setDither(false);
-			} else {
-				d = mResources.getDrawable(R.drawable.icon);
-			}
+			ArtRender.Instance(mResources);
+			d = ArtRender.getArt(art, albumId);
 			
 			// Get artist name, set "unknown" if missing
 			String artistName = c.getString(c.getColumnIndex(Audio.Albums.ARTIST));
@@ -309,7 +269,7 @@ public class LibraryAlbumView extends ListActivity {
 			if (albumName == null || albumName.equals(MediaStore.UNKNOWN_STRING)) {
 				albumName = mResources.getString(R.string.unknown_album);
 			}
-			
+
 			view.setTag(R.id.artist_id, c.getLong(c.getColumnIndex(Audio.Media.ARTIST_ID)));
 			
 			// Set view
@@ -336,6 +296,82 @@ public class LibraryAlbumView extends ListActivity {
 			ImageView icon;
 			TextView line1;
 			TextView line2;
+		}
+	}
+	
+	private static class ArtRender {
+		private static Resources mResources;
+		private static ArtRender single;
+		private static Matrix scaleMatrix;
+		private static BitmapDrawable defaultDrawable;
+		private static final HashMap<Long, BitmapDrawable> artCache = new HashMap<Long, BitmapDrawable>(25);
+		
+		private ArtRender(Resources mResources) {
+			ArtRender.mResources = mResources;
+		}
+		
+		public static ArtRender Instance(Resources mResources) {
+			if (single == null) {
+				single = new ArtRender(mResources);
+			}
+			
+			return single;
+		}
+		
+		public static BitmapDrawable getArt(String art, long albumId) {
+			BitmapDrawable d;
+			
+			if (defaultDrawable == null) {
+				d = new BitmapDrawable(BitmapFactory.decodeResource(mResources, R.drawable.icon));
+			}
+			
+			if (art == null || art.length() == 0) {
+				d = defaultDrawable;
+			} else {
+				if (artCache.containsKey(albumId)) {
+					d = artCache.get(albumId);
+				} else {
+					try {
+						Bitmap orig = BitmapFactory.decodeFile(art);
+						// Convert the dips to pixels
+						final float scale = mResources.getDisplayMetrics().density;
+						Log.d(TAG, String.valueOf(scale));
+						
+						int w = orig.getWidth();
+						int h = orig.getHeight();
+						final int newWidth = 64; // dip
+						final int newHeight = 64;
+						
+						float scaleWidth = (float)newWidth/w * scale * scale;
+						float scaleHeight = (float)newHeight/h * scale * scale;
+						
+						Log.d(TAG, String.valueOf(scaleWidth));
+						Log.d(TAG, String.valueOf(scaleHeight));
+						
+						Matrix m = new Matrix();
+						m.postScale(scaleWidth, scaleHeight);
+						
+	
+						Bitmap resized = Bitmap.createBitmap(orig, 0, 0, w, h, m, true);
+						d = new BitmapDrawable(resized);
+						//d = bmd;
+						
+						//d = Drawable.createFromPath(art);
+						artCache.put(albumId, d);
+					} catch (Exception e) {
+						e.printStackTrace();
+						d = defaultDrawable;
+					}
+				}
+			}
+			
+			if (d != null) {
+				d.setDither(false);
+			} else {
+				d = defaultDrawable;
+			}
+			
+			return d;
 		}
 	}
 }

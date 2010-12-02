@@ -10,6 +10,10 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.res.Resources;
 import android.database.Cursor;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.Matrix;
+import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
@@ -17,6 +21,7 @@ import android.os.Environment;
 import android.os.Handler;
 import android.provider.MediaStore;
 import android.provider.MediaStore.Audio;
+import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
@@ -26,6 +31,7 @@ import android.widget.ListView;
 import android.widget.SectionIndexer;
 import android.widget.SimpleCursorAdapter;
 import android.widget.TextView;
+import android.widget.ImageView.ScaleType;
 
 import com.uid.DroidDoesMusic.R;
 
@@ -204,7 +210,7 @@ public class LibraryAlbumView extends ListActivity {
 	public static class AlbumListAdapter extends SimpleCursorAdapter implements SectionIndexer {
 		private AlphabetIndexer mIndexer;
 		private final Resources mResources;
-		private static final HashMap<Long, Drawable> artCache = new HashMap<Long, Drawable>();
+		private static final HashMap<Long, Drawable> artCache = new HashMap<Long, Drawable>(25);
 		
 		public AlbumListAdapter(Context context, int layout, Cursor c, String[] from, int[] to) {
 			super(context, layout, c, from, to);
@@ -256,7 +262,29 @@ public class LibraryAlbumView extends ListActivity {
 					d = artCache.get(albumId);
 				} else {
 					try {
-						d = Drawable.createFromPath(art);
+						Bitmap orig = BitmapFactory.decodeFile(art);
+						int w = orig.getWidth();
+						int h = orig.getHeight();
+						final int newWidth = 72;
+						final int newHeight = 72;
+						
+						// Convert the dips to pixels
+						final float scale = mResources.getDisplayMetrics().density;
+						
+						
+						
+						float scaleWidth = (float)newWidth/w * scale;
+						float scaleHeight = (float)newHeight/h * scale;
+						
+						Matrix m = new Matrix();
+						m.postScale(scaleWidth, scaleHeight);
+						
+	
+						Bitmap resized = Bitmap.createBitmap(orig, 0, 0, w, h, m, true);
+						d = new BitmapDrawable(resized);
+						//d = bmd;
+						
+						//d = Drawable.createFromPath(art);
 						artCache.put(albumId, d);
 					} catch (Exception e) {
 						d = mResources.getDrawable(R.drawable.icon);
@@ -281,6 +309,7 @@ public class LibraryAlbumView extends ListActivity {
 			
 			// Set view
 			vh.icon.setImageDrawable(d);
+			vh.icon.setScaleType(ScaleType.CENTER);
 			vh.icon.setPadding(0, 0, 1, 0);
 			vh.line1.setText(albumName);
 			vh.line2.setText(artistName);

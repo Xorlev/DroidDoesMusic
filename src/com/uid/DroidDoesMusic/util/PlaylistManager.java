@@ -225,7 +225,7 @@ public class PlaylistManager {
         final int base = cur.getInt(0);
         cur.close();
         ContentValues values = new ContentValues();
-        Toast.makeText(context,"uri path just added song: "+uri.getPath(), Toast.LENGTH_SHORT).show();
+        //Toast.makeText(context,"uri path just deleted song: "+uri.getPath(), Toast.LENGTH_SHORT).show();
         return 0<resolver.delete(uri, MediaStore.Audio.Playlists.Members.AUDIO_ID +" = "+audioId, null);
     }
 	

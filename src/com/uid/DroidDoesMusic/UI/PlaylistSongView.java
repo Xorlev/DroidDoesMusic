@@ -114,13 +114,14 @@ public class PlaylistSongView extends ListActivity implements SimpleGestureListe
 		int pos = getListView().pointToPosition(x, y);
 		
 		PlaylistManager pm = PlaylistManager.getInstance(this);
-
-		int id = pm.getSongIdAtPosition(pos);
-		Toast.makeText(this, "id "+ id+ " position " +pos, Toast.LENGTH_SHORT).show();
-		if (id==-1) {
-			return;
+		int number=this.mAdapter.getCount();
+		if (pos==-1){
+			pos=number;
 		}
+		int id = pm.getSongIdAtPosition(pos-1);
+		if (id==-1) return;
 		
+		Toast.makeText(this, "id "+ id+ " position " +pos, Toast.LENGTH_SHORT).show();
 		switch (direction) {
 		case SimpleGestureFilter.SWIPE_RIGHT:
 			if (pm.addToCurrentPlaylist(id)) {

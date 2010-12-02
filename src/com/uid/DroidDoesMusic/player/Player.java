@@ -117,25 +117,30 @@ public class Player extends Service implements OnCompletionListener {
 	}
 
 	public void startMusic() {
+		Log.d(TAG, "Player: startMusic(): " + String.valueOf(mp.isPlaying()));
 		if (!mp.isPlaying()) {
-		    try {
-				mp.prepare();
-			} catch (IllegalStateException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-			
-			
+			boolean failed = false; 
 			if (!isSongStarted) {
-				lbm.startTrack(artist, album, title, mp.getDuration());
-			}
+			    try {
+					mp.prepare();
+				} catch (IllegalStateException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+					failed = true;
+				}
 			
+				lbm.startTrack(artist, album, title, mp.getDuration());
+			} else {
+				lbm.playbackResumed(artist, album, title, mp.getDuration(), mp.getCurrentPosition());
+			}
+				
 		    mp.start();
 			isSongStarted = true;
 			spawnNotification();
+			changeNotify();
 			mHandler.postDelayed(mUpdateProgressTimeTask, 500);
 		}
 	}
@@ -288,23 +293,27 @@ public class Player extends Service implements OnCompletionListener {
 		}
 		
 		public final void startTrack(String artist, String album, String track, int duration) {
+			metaChanged(artist, album, track, duration, 0);
+		}
+		
+		public final void playbackPaused() {
+			if (sp.getBoolean("lastfm_scrobble", false)) {
+				Intent i = new Intent("fm.last.android.playbackpaused");
+				context.sendBroadcast(i);
+			}
+		}
+		
+		public final void playbackResumed(String artist, String album, String track, int duration, int resumeFrom) {
+			metaChanged(artist, album, track, duration, resumeFrom);
+		}
+		
+		public final void metaChanged(String artist, String album, String track, int duration, int resumeFrom) {
 			if (sp.getBoolean("lastfm_scrobble", false)) {
 				Intent i = new Intent("fm.last.android.metachanged");
 				i.putExtra("artist", artist);
 				i.putExtra("album", album);
 				i.putExtra("track", track);
 				i.putExtra("duration", (long)duration);
-				context.sendBroadcast(i);
-			}
-		}
-		
-		public final void playbackPaused() {
-			playbackPaused(0);
-		}
-		
-		public final void playbackPaused(int resumeFrom) {
-			if (sp.getBoolean("lastfm_scrobble", false)) {
-				Intent i = new Intent("fm.last.android.playbackpaused");
 				if (resumeFrom > 0) {
 					i.putExtra("position", (long)resumeFrom);
 				}

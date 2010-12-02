@@ -1,5 +1,6 @@
 package com.uid.DroidDoesMusic.UI;
 
+import java.io.FileNotFoundException;
 import java.util.HashMap;
 
 import android.app.ListActivity;
@@ -254,8 +255,12 @@ public class LibraryAlbumView extends ListActivity {
 				if (artCache.containsKey(albumId)) {
 					d = artCache.get(albumId);
 				} else {
-					d = Drawable.createFromPath(art);
-					artCache.put(albumId, d);
+					try {
+						d = Drawable.createFromPath(art);
+						artCache.put(albumId, d);
+					} catch (Exception e) {
+						d = mResources.getDrawable(R.drawable.icon);
+					}
 				}
 			}
 			d.setDither(false);

@@ -1,6 +1,7 @@
 package com.uid.DroidDoesMusic.player;
 
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.LinkedList;
 
 import android.app.Notification;
@@ -16,10 +17,11 @@ import android.os.Binder;
 import android.os.Handler;
 import android.os.IBinder;
 import android.preference.PreferenceManager;
+import android.provider.MediaStore;
 import android.util.Log;
-import android.widget.Toast;
 
 import com.uid.DroidDoesMusic.R;
+import com.uid.DroidDoesMusic.util.PlaylistManager;
 
 public class Player extends Service implements OnCompletionListener {
 	protected final String TAG = "DroidDoesMusic";
@@ -27,8 +29,7 @@ public class Player extends Service implements OnCompletionListener {
 	public static final String SERVICE_CHANGE_NAME = SERVICE_PREFIX + "CHANGE";
 	public static final String SERVICE_UPDATE_NAME = SERVICE_PREFIX + "UPDATE";
 	public static final String SERVICE_STOP_NAME = SERVICE_PREFIX + "STOP";
-	
-	private static final int MSG_TYPE_QUEUE = 0;
+	public static final String SERVICE_UPDATE_QUEUE_NAME = SERVICE_PREFIX + "QUEUE_UPDATE";
 	
 	private final IBinder mBinder = new DataBinder();
 	private MediaPlayer mp = new MediaPlayer();
@@ -46,10 +47,12 @@ public class Player extends Service implements OnCompletionListener {
 	private LastfmBroadcaster lbm;
 	
 	private LinkedList<Song> songQueue = new LinkedList<Song>();
+	private PlaylistManager pm;
 
 	public void onCreate(){
 		super.onCreate();
 		mNotificationManager = (NotificationManager)getSystemService(NOTIFICATION_SERVICE);
+		pm = PlaylistManager.getInstance(this);
 		lbm = new LastfmBroadcaster(this);
 		mp.setOnCompletionListener(this);
 	}
@@ -119,7 +122,6 @@ public class Player extends Service implements OnCompletionListener {
 	public void startMusic() {
 		Log.d(TAG, "Player: startMusic(): " + String.valueOf(mp.isPlaying()));
 		if (!mp.isPlaying()) {
-			boolean failed = false; 
 			if (!isSongStarted) {
 			    try {
 					mp.prepare();
@@ -129,7 +131,6 @@ public class Player extends Service implements OnCompletionListener {
 				} catch (IOException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
-					failed = true;
 				}
 			
 				lbm.startTrack(artist, album, title, mp.getDuration());
@@ -166,6 +167,8 @@ public class Player extends Service implements OnCompletionListener {
 	}
 	
 	public void nextSong() {
+		boolean startSong = false;
+		
 		stopMusic();
 		
 		if (!songQueue.isEmpty()) {
@@ -173,14 +176,28 @@ public class Player extends Service implements OnCompletionListener {
 			
 			setSong(s.artist, s.album, s.title, s.datapath);
 			
+			getApplicationContext().sendBroadcast(new Intent(SERVICE_UPDATE_QUEUE_NAME));
+			
+			startSong = true;
+		} else {
+			HashMap<String,String> nextSong = pm.nextSong();
+			
+			if (nextSong != null) {
+				String artist = nextSong.get(MediaStore.Audio.Media.ARTIST);
+				String album = nextSong.get(MediaStore.Audio.Media.ALBUM);
+				String title = nextSong.get(MediaStore.Audio.Media.TITLE);
+				String datapath = nextSong.get(MediaStore.Audio.Media.DATA);
+				setSong(artist, album, title, datapath);
+				startSong = true;
+			}
+		}
+		
+		if (startSong) {
 			// Delay start by a second
 			new Handler().postDelayed(new Runnable() { 
 				public void run() { 
 					startMusic(); 
 				}}, 1000);
-		} else {
-			// TODO playlist next song
-			stopMusic();
 		}
 	}
 	
@@ -203,22 +220,30 @@ public class Player extends Service implements OnCompletionListener {
 		}
 	}
 	
-	public void enqueueFirst(String artist, String album, String title, String dataPath) {
+	public int enqueueFirst(String artist, String album, String title, String dataPath) {
 		songQueue.addFirst(new Song(artist, album, title, dataPath));
 		if (!mp.isPlaying() && !isSongStarted) {
 			nextSong();
 		}
-		Toast.makeText(this, title + " " + getResources().getString(R.string.enqueue_first_success), Toast.LENGTH_SHORT).show();
+		//Toast.makeText(this, title + " " + getResources().getString(R.string.enqueue_first_success), Toast.LENGTH_SHORT).show();
+		
+		getApplicationContext().sendBroadcast(new Intent(SERVICE_UPDATE_QUEUE_NAME));
+		
+		return 1;
 	}
 	
-	public void enqueueLast(String artist, String album, String title, String dataPath) {
+	public int enqueueLast(String artist, String album, String title, String dataPath) {
 		songQueue.addLast(new Song(artist, album, title, dataPath));
 		
 		if (!mp.isPlaying() && !isSongStarted) {
 			nextSong();
 		}
 		
-		Toast.makeText(this, title + " " + getResources().getString(R.string.enqueue_last_success), Toast.LENGTH_SHORT).show();
+		getApplicationContext().sendBroadcast(new Intent(SERVICE_UPDATE_QUEUE_NAME));
+		//Toast.makeText(this, title + " " + getResources().getString(R.string.enqueue_last_success), Toast.LENGTH_SHORT).show();
+		
+		// Return position in queue
+		return songQueue.size();
 	}
 	
 	public void seek(int position) {
@@ -353,5 +378,9 @@ public class Player extends Service implements OnCompletionListener {
 	
 	public LinkedList<Song> getQueue() {
 		return songQueue;
+	}
+	
+	public int getQueueSize() {
+		return songQueue.size();
 	}
 }

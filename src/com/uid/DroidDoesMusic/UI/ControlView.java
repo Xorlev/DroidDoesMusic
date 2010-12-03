@@ -36,6 +36,7 @@ public class ControlView extends FrameLayout implements OnClickListener, OnDrawe
     private ImageButton next;
     private SeekBar seek;
     private TextView text;
+    private TextView queueSize;
     private TextView lengthText;
     private Context ctx;
 	
@@ -57,8 +58,8 @@ public class ControlView extends FrameLayout implements OnClickListener, OnDrawe
 	    next = (ImageButton)findViewById(R.id.StreamNextButton);
 	    seek = (SeekBar)findViewById(R.id.StreamProgressBar);
 	    text = (TextView)findViewById(R.id.StreamTextView);
+	    queueSize = (TextView)findViewById(R.id.StreamQueueSize);
 	    lengthText = (TextView) findViewById(R.id.StreamLengthText);
-	    lengthText.setText("");
 	    
 	    queue.setOnClickListener(this);
 	    prev.setOnClickListener(this);
@@ -85,6 +86,7 @@ public class ControlView extends FrameLayout implements OnClickListener, OnDrawe
 		getContext().unregisterReceiver(trackChangeReceiver);
 		getContext().unregisterReceiver(trackUpdateReceiver);
 		getContext().unregisterReceiver(trackStopReceiver);
+		getContext().unregisterReceiver(queueUpdateReceiver);
 		resetView();
 	}
 	
@@ -95,6 +97,8 @@ public class ControlView extends FrameLayout implements OnClickListener, OnDrawe
 	    seek.setEnabled(false);
 	    seek.setProgress(0);
 	    text.setText(R.string.msg_listen_nothing);
+	    lengthText.setText("");
+	    queueSize.setText("");
 	    
 	    play.setImageResource(android.R.drawable.ic_media_play);
 	}
@@ -157,6 +161,7 @@ public class ControlView extends FrameLayout implements OnClickListener, OnDrawe
     	    getContext().registerReceiver(trackChangeReceiver, new IntentFilter(com.uid.DroidDoesMusic.player.Player.SERVICE_CHANGE_NAME));
     	    getContext().registerReceiver(trackUpdateReceiver, new IntentFilter(com.uid.DroidDoesMusic.player.Player.SERVICE_UPDATE_NAME));
     	    getContext().registerReceiver(trackStopReceiver,   new IntentFilter(com.uid.DroidDoesMusic.player.Player.SERVICE_STOP_NAME));
+    	    getContext().registerReceiver(queueUpdateReceiver, new IntentFilter(com.uid.DroidDoesMusic.player.Player.SERVICE_UPDATE_QUEUE_NAME));
     	}
     	public void onServiceDisconnected(ComponentName classname){
     		Log.d(TAG, "onServiceDisconnected: Player Service Disconnected");
@@ -179,7 +184,7 @@ public class ControlView extends FrameLayout implements OnClickListener, OnDrawe
 		    }
 		    
 		    String artist = intent.getExtras().getString("artist");
-		    String album = intent.getExtras().getString("album");
+		    //String album = intent.getExtras().getString("album");
 		    String title = intent.getExtras().getString("title");
 		    
 		    text.setText(artist + " - " + title);
@@ -203,6 +208,22 @@ public class ControlView extends FrameLayout implements OnClickListener, OnDrawe
 	        Log.d(TAG, getClass().getSimpleName() + ": onReceive: " + intent.getData());
 	        
 		    resetView();
+
+		}
+	};
+	
+	private BroadcastReceiver queueUpdateReceiver = new BroadcastReceiver() {
+		@Override
+		public void onReceive(Context content, Intent intent) {
+	        Log.d(TAG, getClass().getSimpleName() + ": onReceive: " + intent.getData());
+	        
+		    int sizeOfQueue = mPlayer.getQueueSize();
+		    
+		    if (sizeOfQueue > 0) {
+		    	queueSize.setText("[" + sizeOfQueue + "]");
+		    } else {
+		    	queueSize.setText("");
+		    }
 
 		}
 	};

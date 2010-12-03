@@ -199,14 +199,18 @@ public class LibrarySongView extends ListActivity implements SimpleGestureListen
 		String title = cur.getString(cur.getColumnIndex(Audio.Media.TITLE));
 		String dataPath = cur.getString(cur.getColumnIndex(Audio.Media.DATA));
 		
+		String str = artist + " - " + title;
+		
 		if (isPlayerBound) {
 			switch(menuitem.getItemId()) {
 			case R.id.song_enqueue_next:
-				mPlayer.enqueueLast(artist, album, title, dataPath);
+				int position = mPlayer.enqueueLast(artist, album, title, dataPath);
+				
+				Toast.makeText(this, title + " added to position " + position + " in the immediate queue.", Toast.LENGTH_LONG).show();
 				break;
 			case R.id.song_add_playlist:
 				if (pm.addToCurrentPlaylist(songId)) {
-					String str = artist + " - " + title;
+
 					Toast.makeText(this, "Added " + str + " to playlist", Toast.LENGTH_SHORT).show();
 				}
 				break;

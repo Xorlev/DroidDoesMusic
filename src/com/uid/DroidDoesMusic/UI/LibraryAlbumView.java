@@ -1,6 +1,8 @@
 package com.uid.DroidDoesMusic.UI;
 
 import java.util.HashMap;
+import java.util.Iterator;
+import java.util.TreeSet;
 
 import android.app.ListActivity;
 import android.content.BroadcastReceiver;
@@ -112,6 +114,17 @@ public class LibraryAlbumView extends ListActivity {
 		startActivity(i);
 	}
 	
+	public static <T>
+	String join(final Iterable<T> objs, final String delimiter) {
+	    Iterator<T> iter = objs.iterator();
+	    if (!iter.hasNext())
+	        return "";
+	    StringBuffer buffer = new StringBuffer('"' + String.valueOf(iter.next()) + '"');
+	    while (iter.hasNext())
+	        buffer.append(delimiter).append('"' + String.valueOf(iter.next()) + '"');
+	    return buffer.toString();
+	}
+	
 	public void getAlbums(int... artistId) {
 		int artist;
 		String filter = new String();
@@ -131,6 +144,21 @@ public class LibraryAlbumView extends ListActivity {
 		}
 		
 		Uri extUri = Audio.Albums.EXTERNAL_CONTENT_URI;
+		
+		TreeSet<String> ts = new TreeSet<String>();
+		
+		String[] sproj = new String[] {Audio.Media.ALBUM};
+		
+		Cursor c = managedQuery(Audio.Media.EXTERNAL_CONTENT_URI, sproj, filter, null, Audio.Albums.ALBUM + " ASC");
+		
+		for(int i = 0; i < c.getCount(); i++) {
+			c.moveToPosition(i);
+			String u_album = c.getString(c.getColumnIndex(Audio.Media.ALBUM));
+			Log.d(TAG, "album: " + u_album);
+			ts.add(u_album);
+		}
+		
+		filter = Audio.Media.ALBUM + " IN (" + join(ts, ", ") + ")";
 
         // Columns to grab from the DB, then the expected mappings
         String[] projection = new String[] {Audio.Albums._ID, Audio.Albums.ALBUM, Audio.Media.ARTIST_ID, Audio.Albums.ARTIST, Audio.Albums.ALBUM_ART};

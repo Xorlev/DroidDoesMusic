@@ -100,8 +100,15 @@ public class LibrarySongView extends ListActivity implements SimpleGestureListen
 
 	public void onSwipe(int direction, int x, int y) {
 		String str = "";
+		
 
 		int pos = getListView().pointToPosition(x, y);
+		
+		int number = getListAdapter().getCount();
+		if (pos == -1){
+			pos = number;
+		}
+		
 		cur.moveToPosition(pos);
 
 		int id = cur.getInt(cur.getColumnIndex(Audio.Media._ID));
@@ -109,6 +116,8 @@ public class LibrarySongView extends ListActivity implements SimpleGestureListen
 		String title = cur.getString(cur.getColumnIndex(Audio.Media.TITLE));
 
 		str = artist + " - " + title;
+		
+		
 		
 		switch (direction) {
 		case SimpleGestureFilter.SWIPE_RIGHT:
@@ -167,9 +176,7 @@ public class LibrarySongView extends ListActivity implements SimpleGestureListen
 		String dataPath = cur.getString(cur.getColumnIndex(Audio.Media.DATA));
 		
 		if (isPlayerBound) {
-			mPlayer.stopMusic();
-			mPlayer.setSong(artist, album, title, dataPath);
-			mPlayer.startMusic();
+			mPlayer.enqueueLast(artist, album, title, dataPath);
 		}
 	}
 	

@@ -163,6 +163,44 @@ public class PlaylistManager {
 			return null;
 		}
 	}
+	
+	
+	/**
+	 * Returns a string array for info on the previous song.
+	 * use PlaylistManager.ARTIST, PlaylistManager.ALBUM
+	 * PlaylistManager.TITLE, PlaylistManager.DATAPATH for the
+	 * indexes on the string array.
+	 * Returns null if no next song.
+	 * 
+	 * @return
+	 */
+	public HashMap<String,String> previousSong(){
+		HashMap<String,String> hashmap = new HashMap<String,String>();
+		Uri membersUri = MediaStore.Audio.Playlists.Members.getContentUri("external", mCurrentPlaylist);
+		Cursor currentSongQuery = cr.query(membersUri, STAR, null, null, Audio.Media.DEFAULT_SORT_ORDER);
+		if(currentSongQuery!=null){
+			if(currentSongQuery.moveToPosition(mPosition)){
+				if(currentSongQuery.moveToPrevious()){
+					this.mPosition+=1;
+					String song [] = new String[4];
+					hashmap.put(ARTIST,currentSongQuery.getString(currentSongQuery.getColumnIndex(Audio.Media.ARTIST)));
+					hashmap.put(ALBUM,currentSongQuery.getString(currentSongQuery.getColumnIndex(Audio.Media.ALBUM)));
+					hashmap.put(TITLE,currentSongQuery.getString(currentSongQuery.getColumnIndex(Audio.Media.TITLE)));
+					hashmap.put(DATAPATH,currentSongQuery.getString(currentSongQuery.getColumnIndex(Audio.Media.DATA)));
+					hashmap.put(ID,currentSongQuery.getString(currentSongQuery.getColumnIndex(Audio.Media._ID)));
+					return hashmap;	
+				} else {
+					return null;
+				}
+			} else {
+				return null;
+			}
+		} else {
+			return null;
+		}
+	}
+	
+	
 	/**
 	 *returns a string array with info about the current song
 	 * use PlaylistManager.ARTIST, PlaylistManager.ALBUM

@@ -12,4 +12,10 @@
 		android:title="@string/quit_label"
 		android:icon="@android:drawable/ic_menu_close_clear_cancel"
 		android:alphabeticShortcut="@string/quit_shortcut" />
+	<group android:id="@+id/group1">
+		<item android:id="@+id/addplaylist"
+			android:title="@string/add_playlists_label"
+			android:icon="@android:drawable/ic_input_add"
+			android:alphabeticShortcut = "@string/add_shortcut" />
+	</group>
 </menu>

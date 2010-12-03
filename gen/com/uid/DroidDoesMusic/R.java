@@ -25,28 +25,34 @@ public final class R {
     }
     public static final class id {
         public static final int DrawerArrowImage=0x7f070009;
-        public static final int MediaPlayer=0x7f070012;
-        public static final int StreamLengthText=0x7f07000c;
-        public static final int StreamNextButton=0x7f070010;
-        public static final int StreamPlayButton=0x7f07000f;
-        public static final int StreamPrevButton=0x7f07000e;
-        public static final int StreamProgressBar=0x7f07000b;
-        public static final int StreamQueueView=0x7f07000d;
+        public static final int MediaPlayer=0x7f070013;
+        public static final int StreamLengthText=0x7f07000d;
+        public static final int StreamNextButton=0x7f070011;
+        public static final int StreamPlayButton=0x7f070010;
+        public static final int StreamPrevButton=0x7f07000f;
+        public static final int StreamProgressBar=0x7f07000c;
+        public static final int StreamQueueSize=0x7f07000b;
+        public static final int StreamQueueView=0x7f07000e;
         public static final int StreamTextView=0x7f07000a;
-        public static final int about=0x7f070015;
+        public static final int about=0x7f070016;
         public static final int about_content=0x7f070002;
         public static final int about_icon=0x7f070001;
+        public static final int addplaylist=0x7f070019;
         public static final int artist_id=0x7f070000;
         public static final int content=0x7f070008;
         public static final int drawer=0x7f070006;
+        public static final int group1=0x7f070018;
         public static final int handle=0x7f070007;
         public static final int icon=0x7f070003;
-        public static final int main_linear=0x7f070011;
-        public static final int quit=0x7f070016;
-        public static final int settings=0x7f070014;
+        public static final int main_linear=0x7f070012;
+        public static final int quit=0x7f070017;
+        public static final int settings=0x7f070015;
+        public static final int song_add_playlist=0x7f07001b;
+        public static final int song_enqueue_next=0x7f07001a;
+        public static final int song_play=0x7f07001c;
         public static final int text1=0x7f070005;
         public static final int text2=0x7f070004;
-        public static final int textview=0x7f070013;
+        public static final int textview=0x7f070014;
     }
     public static final class layout {
         public static final int about=0x7f030000;
@@ -65,6 +71,8 @@ public final class R {
         public static final int about_shortcut=0x7f050011;
         public static final int about_text=0x7f050003;
         public static final int about_title=0x7f050002;
+        public static final int add_playlists_label=0x7f05001f;
+        public static final int add_shortcut=0x7f050020;
         public static final int app_name=0x7f050001;
         public static final int ctx_add_playlist=0x7f05001d;
         public static final int ctx_enqueue=0x7f05001c;

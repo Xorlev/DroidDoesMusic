@@ -53,4 +53,6 @@
     <string name="ctx_enqueue">Enqueue Next</string>
     <string name="ctx_add_playlist">Add to Playlist</string>
     <string name="ctx_play">Play</string>
+<string name="add_playlists_label">Add Playlist</string>
+<string name="add_shortcut">n</string>
 </resources>

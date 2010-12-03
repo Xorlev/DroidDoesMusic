@@ -43,8 +43,8 @@ public class PlaylistManager {
 	public static final String TITLE="TITLE";
 	public static final String DATAPATH="DATAPATH";
 	public static final String ID = "_ID";
-	
-	
+
+
 	/**
 	 * Private constructor due to Singleton pattern.
 	 * @param context
@@ -54,10 +54,10 @@ public class PlaylistManager {
 		this.context = context;
 		this.cr = context.getContentResolver();
 		PlaylistManager.sp = PreferenceManager.getDefaultSharedPreferences(context);
-		
+
 		mCurrentPlaylist = PlaylistManager.sp.getInt("PlaylistCurrentPlaylistId", 0);
 	}
-	
+
 	/**
 	 * This class is a Singleton pattern so you should get the instance that is
 	 * all ready running.
@@ -70,7 +70,7 @@ public class PlaylistManager {
 			return new PlaylistManager(context);
 		} else return instance;
 	}
-	
+
 	/**
 	 * Lists the current playlists on the device in a SimpleCursorAdapter.
 	 * @return
@@ -81,21 +81,21 @@ public class PlaylistManager {
 		String[] displayColumns = {Audio.Playlists.NAME};
 		int layout = android.R.layout.simple_list_item_1;
 		int[] display = new int[] { android.R.id.text1};
-		
+
 		mCur = cr.query(android.provider.MediaStore.Audio.Playlists.EXTERNAL_CONTENT_URI, projection, null, null, Audio.Playlists.DEFAULT_SORT_ORDER);
-		
+
 		try{
-		mCur.moveToFirst();
+			mCur.moveToFirst();
 		} catch (NullPointerException e){
 			return null;
 		}
 		//TODO this line causes something crazy to happen if there is no music
 		//Log.d("DroidDoesMusic","Here I am:   "+mCur.getInt(mCur.getColumnIndex(Audio.Playlists._ID)));
 		SimpleCursorAdapter adapter = new SimpleCursorAdapter(context,layout,mCur,displayColumns,display);
-		
+
 		return adapter;
 	}
-	
+
 	/**
 	 * Prints the songs in the playlist given by the playlistId.
 	 * @param playlistId
@@ -111,7 +111,14 @@ public class PlaylistManager {
 		adapter = new SimpleCursorAdapter(context,layout,mCur,displayColumns,display);
 		return adapter;
 	}
+
 	
+	/**
+	 * Returns the AUDIO_ID of the song at a specific position
+	 * returns -1 if none exists
+	 * @param pos
+	 * @return
+	 */
 	public int getSongIdAtPosition(int pos){
 		int old = mCur.getPosition();
 		int id=-1;
@@ -121,10 +128,10 @@ public class PlaylistManager {
 		mCur.moveToPosition(old);
 		return id;
 	}
-	
+
 	public void setPlaylistId(int playlistId){
 		PlaylistManager.mCurrentPlaylist = playlistId;
-		
+
 		SharedPreferences.Editor e = sp.edit();
 		e.putInt("PlaylistCurrentPlaylistId", playlistId);
 		e.commit();
@@ -163,8 +170,8 @@ public class PlaylistManager {
 			return null;
 		}
 	}
-	
-	
+
+
 	/**
 	 * Returns a string array for info on the previous song.
 	 * use PlaylistManager.ARTIST, PlaylistManager.ALBUM
@@ -199,8 +206,8 @@ public class PlaylistManager {
 			return null;
 		}
 	}
-	
-	
+
+
 	/**
 	 *returns a string array with info about the current song
 	 * use PlaylistManager.ARTIST, PlaylistManager.ALBUM
@@ -230,44 +237,44 @@ public class PlaylistManager {
 			return null;
 		}
 	} 
-	
 
-	
+
+
 	//borrowed from http://stackoverflow.com/questions/3182937
 	public void addToPlaylist(ContentResolver resolver, int audioId) {
 
-        String[] cols = new String[] {
-                "count(*)"
-        };
-        Uri uri = MediaStore.Audio.Playlists.Members.getContentUri("external", mCurrentPlaylist);
-        
-        Cursor cur = resolver.query(uri, cols, null, null, null);
-        cur.moveToFirst();
-        final int base = cur.getInt(0);
-        cur.close();
-        ContentValues values = new ContentValues();
-        values.put(MediaStore.Audio.Playlists.Members.PLAY_ORDER, base+audioId);
-        values.put(MediaStore.Audio.Playlists.Members.AUDIO_ID, audioId);
-        uri=resolver.insert(uri, values);
-        
-    }
+		String[] cols = new String[] {
+				"count(*)"
+		};
+		Uri uri = MediaStore.Audio.Playlists.Members.getContentUri("external", mCurrentPlaylist);
 
-   public boolean removeFromPlaylist(ContentResolver resolver, int audioId) {
-       
-        String[] cols = new String[] {
-                "count(*)"
-        };
-        Uri uri = MediaStore.Audio.Playlists.Members.getContentUri("external", mCurrentPlaylist);
-        Cursor cur = resolver.query(uri, cols, null, null, null);
-        cur.moveToFirst();
-        final int base = cur.getInt(0);
-        cur.close();
-        ContentValues values = new ContentValues();
-        //Toast.makeText(context,"uri path just deleted song: "+uri.getPath(), Toast.LENGTH_SHORT).show();
-        return 0<resolver.delete(uri, MediaStore.Audio.Playlists.Members.AUDIO_ID +" = "+audioId, null);
-    }
-	
-	
+		Cursor cur = resolver.query(uri, cols, null, null, null);
+		cur.moveToFirst();
+		final int base = cur.getInt(0);
+		cur.close();
+		ContentValues values = new ContentValues();
+		values.put(MediaStore.Audio.Playlists.Members.PLAY_ORDER, base+audioId);
+		values.put(MediaStore.Audio.Playlists.Members.AUDIO_ID, audioId);
+		uri=resolver.insert(uri, values);
+
+	}
+
+	public boolean removeFromPlaylist(ContentResolver resolver, int audioId) {
+
+		String[] cols = new String[] {
+				"count(*)"
+		};
+		Uri uri = MediaStore.Audio.Playlists.Members.getContentUri("external", mCurrentPlaylist);
+		Cursor cur = resolver.query(uri, cols, null, null, null);
+		cur.moveToFirst();
+		final int base = cur.getInt(0);
+		cur.close();
+		ContentValues values = new ContentValues();
+		//Toast.makeText(context,"uri path just deleted song: "+uri.getPath(), Toast.LENGTH_SHORT).show();
+		return 0<resolver.delete(uri, MediaStore.Audio.Playlists.Members.AUDIO_ID +" = "+audioId, null);
+	}
+
+
 	/**
 	 * Returns a Uri to that can be used to query the currently selected playlist.
 	 * @return
@@ -291,15 +298,15 @@ public class PlaylistManager {
 	}
 
 	public boolean addToCurrentPlaylist(int id) {
-//		Uri uri = MediaStore.Audio.Media.EXTERNAL_CONTENT_URI;
-//		ContentResolver cr = context.getContentResolver();
-//		Cursor cur = cr.query(Audio.Media.EXTERNAL_CONTENT_URI, STAR, null, null, null);
-//		cur.moveToFirst();
-//		int id2=cur.getInt(cur.getColumnIndex(Audio.Media._ID));
+		//		Uri uri = MediaStore.Audio.Media.EXTERNAL_CONTENT_URI;
+		//		ContentResolver cr = context.getContentResolver();
+		//		Cursor cur = cr.query(Audio.Media.EXTERNAL_CONTENT_URI, STAR, null, null, null);
+		//		cur.moveToFirst();
+		//		int id2=cur.getInt(cur.getColumnIndex(Audio.Media._ID));
 		this.addToPlaylist(context.getContentResolver(), id);
 		return true;
 	}
-	
+
 	public boolean removeFromCurrentPlaylist(int id) {
 		return removeFromPlaylist(context.getContentResolver(), id);
 	}
@@ -307,6 +314,47 @@ public class PlaylistManager {
 	public int getCurrentPlaylistId() {
 		// TODO Auto-generated method stub
 		return this.mCurrentPlaylist;
+	}
+
+	
+	/**
+	 * If it returns -1 there is no such playlist
+	 * if not it returns the playlist id
+	 * @param name
+	 * @return
+	 */
+	public int idForPlaylist(String name){
+		int id;
+		ContentResolver cr = context.getContentResolver();
+		Cursor c =cr.query(MediaStore.Audio.Playlists.EXTERNAL_CONTENT_URI, new String[] { MediaStore.Audio.Playlists._ID }, MediaStore.Audio.Playlists.NAME + "=?",
+				new String[] { name }, MediaStore.Audio.Playlists.DEFAULT_SORT_ORDER);
+		id=-1;
+		if (c != null){
+			c.moveToFirst();
+			if (!c.isAfterLast()) {
+				id = c.getInt(0);
+			}
+			c.close();
+		}
+
+		return id;
+	}
+	
+	/**
+	 * Creates a playlist unless there is already a playlist called by that name 
+	 * @param value
+	 */
+	public void createPlaylist(String value) {
+		if(value!=null && value.length()>0){
+
+			int id = idForPlaylist(value);
+			Uri uri;
+			if (id < 0) {
+				ContentValues values = new ContentValues(1);
+				values.put(MediaStore.Audio.Playlists.NAME, value);
+				uri = context.getContentResolver().insert(MediaStore.Audio.Playlists.EXTERNAL_CONTENT_URI, values);
+			}
+		}
 	}
 
 

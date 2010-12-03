@@ -27,6 +27,7 @@ public class Main extends TabActivity {
     protected boolean isPlayerBound = false;
 	private ControlView controlView;
     private TabHost mTabHost;
+    static final String ADDPLAYLIST ="com.uid.DroidDoesMusic.UI.Main.ADDPLAYLIST";
 	@Override
     public void onCreate(Bundle savedInstanceState) {
         Log.d(TAG, getClass().getSimpleName() + ": onCreate");
@@ -76,6 +77,9 @@ public class Main extends TabActivity {
 			stopService(new Intent("com.uid.DroidDoesMusic.player.Player"));
 			finish();
 			return true;
+		case R.id.addplaylist:
+			this.sendBroadcast(new Intent(ADDPLAYLIST));
+			
     	}
     	return false;
     }

@@ -1,15 +1,22 @@
 package com.uid.DroidDoesMusic.UI;
 
+import android.app.AlertDialog;
 import android.app.ListActivity;
+import android.content.BroadcastReceiver;
+import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.util.Log;
 import android.view.View;
+import android.widget.EditText;
 import android.widget.ListAdapter;
 import android.widget.ListView;
+import android.widget.Toast;
 
 import com.uid.DroidDoesMusic.util.PlaylistManager;
 
@@ -23,6 +30,7 @@ public class Playlist extends ListActivity {
 	protected static final String TAG = "DroidDoesMusic";
 	Uri extContentPlaylists = MediaStore.Audio.Playlists.EXTERNAL_CONTENT_URI;
 	private String playlistName = new String();
+	
 	private int playlistId;
 	private ListAdapter mAdapter;
     /** Called when the activity is first created. */	
@@ -30,14 +38,43 @@ public class Playlist extends ListActivity {
     public void onCreate(Bundle savedInstanceState) {
         Log.d(TAG, getClass().getSimpleName() + ": onCreate");
         super.onCreate(savedInstanceState);
+        
         mAdapter = PlaylistManager.getInstance(this).listPlaylists();
        	this.setListAdapter(mAdapter);
 	}
 	
 	@Override
+	protected void onResume(){
+		super.onResume();
+		registerReceiver(addPlaylistReceiver, new IntentFilter(Main.ADDPLAYLIST));
+	}
+	
+	@Override
+	protected
+	void onPause(){
+		super.onPause();
+		this.unregisterReceiver(addPlaylistReceiver);
+	}
+	
+	
+	/**
+	 * broadcast reciver used to call add playlist
+	 */
+	private BroadcastReceiver addPlaylistReceiver = new BroadcastReceiver() {
+		@Override
+		public void onReceive(Context content, Intent intent) {
+			addPlaylist();
+			
+		}
+	};
+	
+	
+	
+	@Override
 	public void onListItemClick(ListView l, View v, int position, long id) {
 		Log.d(TAG, getClass().getSimpleName() + ": onListItemClick: (" + id + ")");
 		super.onListItemClick(l, v, position, id);
+			
 		
 		Log.d(TAG,"Position: "+position);
 		Cursor c = (Cursor)mAdapter.getItem(position);
@@ -53,7 +90,30 @@ public class Playlist extends ListActivity {
 		
 	}
 	
-
+	public void addPlaylist(){
+		final PlaylistManager pm = PlaylistManager.getInstance(this);
+		AlertDialog.Builder alert = new AlertDialog.Builder(this);
+		final EditText input = new EditText(this);
+		alert.setView(input);
+		alert.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+			public void onClick(DialogInterface dialog, int whichButton) {
+				String value = input.getText().toString().trim();
+				if(value != null && value.length()>0)
+				pm.createPlaylist(value);
+				//Toast.makeText(getApplicationContext(), value,Toast.LENGTH_SHORT).show();
+			}
+		});
+		
+		alert.setNegativeButton("Cancel",
+				new DialogInterface.OnClickListener() {
+					public void onClick(DialogInterface dialog, int whichButton) {
+						dialog.cancel();
+					}
+				});
+		alert.setMessage("Add a playlist");
+		alert.show();
+		
+	}
 	
 	
 }

@@ -60,6 +60,9 @@
         <activity android:name=".UI.Preferences"
                   android:label="@string/settings_title">
         </activity>
+        <activity android:name=".UI.AddPlaylist"
+                  android:label="@string/app_name">
+        </activity>
 		<service android:name=".player.Player">
 			<intent-filter>
 				<action android:name="com.uid.DroidDoesMusic.player.Player" />

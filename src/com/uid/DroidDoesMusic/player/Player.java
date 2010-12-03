@@ -55,6 +55,8 @@ public class Player extends Service implements OnCompletionListener {
 		pm = PlaylistManager.getInstance(this);
 		lbm = new LastfmBroadcaster(this);
 		mp.setOnCompletionListener(this);
+		
+		loadFirstSong();
 	}
 	
 	@Override
@@ -96,6 +98,18 @@ public class Player extends Service implements OnCompletionListener {
 	public IBinder onBind(Intent i){
 		Log.d(TAG,"Player service bound");
 		return mBinder;	
+	}
+	
+	public void loadFirstSong() {
+		HashMap<String,String> currentSong = pm.currentSong();
+		
+		if (currentSong != null) {
+			String artist = currentSong.get(MediaStore.Audio.Media.ARTIST);
+			String album = currentSong.get(MediaStore.Audio.Media.ALBUM);
+			String title = currentSong.get(MediaStore.Audio.Media.TITLE);
+			String datapath = currentSong.get(MediaStore.Audio.Media.DATA);
+			setSong(artist, album, title, datapath);
+		}
 	}
 	
 	public void setSong(String artist, String album, String title, String dataPath) {

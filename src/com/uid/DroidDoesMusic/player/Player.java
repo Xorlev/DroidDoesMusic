@@ -90,6 +90,7 @@ public class Player extends Service implements OnCompletionListener {
 	
 	
 	public void onCompletion(MediaPlayer mp) {
+		
 		nextSong();
 	}
 	
@@ -204,12 +205,14 @@ public class Player extends Service implements OnCompletionListener {
 			HashMap<String,String> nextSong = pm.nextSong();
 			
 			if (nextSong != null) {
-				String artist = nextSong.get(MediaStore.Audio.Media.ARTIST);
-				String album = nextSong.get(MediaStore.Audio.Media.ALBUM);
-				String title = nextSong.get(MediaStore.Audio.Media.TITLE);
-				String datapath = nextSong.get(MediaStore.Audio.Media.DATA);
+				String artist = nextSong.get(PlaylistManager.ARTIST);
+				String album = nextSong.get(PlaylistManager.ALBUM);
+				String title = nextSong.get(PlaylistManager.TITLE);
+				String datapath = nextSong.get(PlaylistManager.DATAPATH);
 				setSong(artist, album, title, datapath);
 				startSong = true;
+			} else {
+				Log.d(TAG,"PlaylistManager.nextSong() returned null ");
 			}
 		}
 		

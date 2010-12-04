@@ -97,21 +97,7 @@ public class PlaylistManager {
 		return adapter;
 	}
 
-	/**
-	 * Prints the songs in the playlist given by the playlistId.
-	 * @param playlistId
-	 * @return
-	 */
-	public ListAdapter listSongs( int playlistId){
-		ListAdapter adapter;
-		String[] displayColumns = {Audio.AudioColumns.TITLE};
-		int layout = android.R.layout.simple_list_item_1;
-		int[] display = new int[] { android.R.id.text1};
-		Uri membersUri = MediaStore.Audio.Playlists.Members.getContentUri("external", playlistId);
-		mCur = cr.query(membersUri, STAR, null, null, Audio.Playlists.Members.DEFAULT_SORT_ORDER);
-		adapter = new SimpleCursorAdapter(context,layout,mCur,displayColumns,display);
-		return adapter;
-	}
+
 
 	
 	/**
@@ -137,6 +123,26 @@ public class PlaylistManager {
 		e.putInt("PlaylistCurrentPlaylistId", playlistId);
 		e.commit();
 	}
+	
+	
+	
+	/**
+	 * Prints the songs in the playlist given by the playlistId.
+	 * @param playlistId
+	 * @return
+	 */
+	public ListAdapter listSongs( int playlistId){
+		ListAdapter adapter;
+		String[] displayColumns = {Audio.AudioColumns.TITLE};
+		int layout = android.R.layout.simple_list_item_1;
+		int[] display = new int[] { android.R.id.text1};
+		Uri membersUri = MediaStore.Audio.Playlists.Members.getContentUri("external", playlistId);
+		mCur = cr.query(membersUri, STAR, null, null, Audio.Playlists.Members.DEFAULT_SORT_ORDER);
+		adapter = new SimpleCursorAdapter(context,layout,mCur,displayColumns,display);
+		return adapter;
+	}
+	
+	
 	/**
 	 * Returns a string array for info on the next song.
 	 * use PlaylistManager.ARTIST, PlaylistManager.ALBUM
@@ -149,12 +155,14 @@ public class PlaylistManager {
 	public HashMap<String,String> nextSong(){
 		HashMap<String,String> hashmap = new HashMap<String,String>();
 		Uri membersUri = MediaStore.Audio.Playlists.Members.getContentUri("external", mCurrentPlaylist);
-		Cursor currentSongQuery = cr.query(membersUri, STAR, null, null, Audio.Media.DEFAULT_SORT_ORDER);
+		Cursor currentSongQuery = cr.query(membersUri, STAR, null, null, Audio.Playlists.Members.DEFAULT_SORT_ORDER);
+		currentSongQuery = mCur;
+		
 		if(currentSongQuery!=null){
 			if(currentSongQuery.moveToPosition(mPosition)){
+				
 				if(currentSongQuery.moveToNext()){
-					this.mPosition+=1;
-					String song [] = new String[4];
+					this.mPosition++;
 					hashmap.put(ARTIST,currentSongQuery.getString(currentSongQuery.getColumnIndex(Audio.Media.ARTIST)));
 					hashmap.put(ALBUM,currentSongQuery.getString(currentSongQuery.getColumnIndex(Audio.Media.ALBUM)));
 					hashmap.put(TITLE,currentSongQuery.getString(currentSongQuery.getColumnIndex(Audio.Media.TITLE)));
@@ -162,12 +170,15 @@ public class PlaylistManager {
 					hashmap.put(ID,currentSongQuery.getString(currentSongQuery.getColumnIndex(Audio.Media._ID)));
 					return hashmap;	
 				} else {
+					Log.d(TAG, "Could not move to next");
 					return null;
 				}
 			} else {
+				Log.d(TAG, "Could not move to position "+mPosition);
 				return null;
 			}
 		} else {
+			Log.d(TAG,"Current song query is null");
 			return null;
 		}
 	}
@@ -185,12 +196,11 @@ public class PlaylistManager {
 	public HashMap<String,String> previousSong(){
 		HashMap<String,String> hashmap = new HashMap<String,String>();
 		Uri membersUri = MediaStore.Audio.Playlists.Members.getContentUri("external", mCurrentPlaylist);
-		Cursor currentSongQuery = cr.query(membersUri, STAR, null, null, Audio.Media.DEFAULT_SORT_ORDER);
+		Cursor currentSongQuery = cr.query(membersUri, STAR, null, null, Audio.Playlists.Members.DEFAULT_SORT_ORDER);
 		if(currentSongQuery!=null){
 			if(currentSongQuery.moveToPosition(mPosition)){
 				if(currentSongQuery.moveToPrevious()){
-					this.mPosition+=1;
-					String song [] = new String[4];
+					this.mPosition--;
 					hashmap.put(ARTIST,currentSongQuery.getString(currentSongQuery.getColumnIndex(Audio.Media.ARTIST)));
 					hashmap.put(ALBUM,currentSongQuery.getString(currentSongQuery.getColumnIndex(Audio.Media.ALBUM)));
 					hashmap.put(TITLE,currentSongQuery.getString(currentSongQuery.getColumnIndex(Audio.Media.TITLE)));
@@ -220,7 +230,7 @@ public class PlaylistManager {
 	public HashMap<String,String> currentSong(){
 		HashMap<String,String> hashmap = new HashMap<String,String>();
 		Uri membersUri = MediaStore.Audio.Playlists.Members.getContentUri("external", mCurrentPlaylist);
-		Cursor currentSongQuery = cr.query(membersUri, STAR, null, null, Audio.Media.DEFAULT_SORT_ORDER);
+		Cursor currentSongQuery = cr.query(membersUri, STAR, null, null, Audio.Playlists.Members.DEFAULT_SORT_ORDER);
 		if(currentSongQuery!=null){
 			if(currentSongQuery.moveToPosition(mPosition)){
 				String song [] = new String[4];
@@ -295,7 +305,7 @@ public class PlaylistManager {
 	 * @param playlistId
 	 */
 	public void setSelectedPlaylist(int playlistId){
-		mCurrentPlaylist = playlistId;
+		this.setPlaylistId(playlistId);
 	}
 
 	public boolean addToCurrentPlaylist(int id) {

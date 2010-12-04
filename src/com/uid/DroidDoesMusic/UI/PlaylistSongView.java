@@ -3,8 +3,13 @@ package com.uid.DroidDoesMusic.UI;
 import java.util.HashMap;
 
 import android.app.ListActivity;
+import android.content.ComponentName;
+import android.content.Context;
+import android.content.Intent;
+import android.content.ServiceConnection;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.IBinder;
 import android.provider.MediaStore;
 import android.provider.MediaStore.Audio;
 import android.util.Log;
@@ -15,6 +20,7 @@ import android.widget.ListView;
 import android.widget.Toast;
 
 import com.uid.DroidDoesMusic.UI.SimpleGestureFilter.SimpleGestureListener;
+import com.uid.DroidDoesMusic.player.Player;
 import com.uid.DroidDoesMusic.util.PlaylistManager;
 
 /**
@@ -33,6 +39,8 @@ public class PlaylistSongView extends ListActivity implements SimpleGestureListe
 	private ListAdapter mAdapter;
 	private PlaylistManager mPlaylistManager;
 	private SimpleGestureFilter detector; 
+	private Player mPlayer;
+	private boolean isPlayerBound;
 	
 	/** Called when the activity is first created. */	
 	@Override
@@ -59,7 +67,7 @@ public class PlaylistSongView extends ListActivity implements SimpleGestureListe
 		}            
 		PlaylistManager.getInstance(this).setPlaylistId(playlistId);
 		mAdapter = PlaylistManager.getInstance(this).listSongs(playlistId);
-		
+		bind();
 		this.setListAdapter(mAdapter);
 
 	}
@@ -76,26 +84,19 @@ public class PlaylistSongView extends ListActivity implements SimpleGestureListe
 	public void onListItemClick(ListView l, View v, int position, long id) {
 		Log.d(TAG, getClass().getSimpleName() + ": onListItemClick: (" + id + ")");
 		super.onListItemClick(l, v, position, id);
-
-
-		/*Toast.makeText(this,info.get(PlaylistManager.ID), Toast.LENGTH_SHORT).show();
-
-		Toast.makeText(this,info.get(PlaylistManager.ARTIST), Toast.LENGTH_SHORT).show();
-		Toast.makeText(this,info.get(PlaylistManager.ALBUM), Toast.LENGTH_SHORT).show();
-		Toast.makeText(this,info.get(PlaylistManager.TITLE), Toast.LENGTH_SHORT).show();
-		Toast.makeText(this,info.get(PlaylistManager.DATAPATH), Toast.LENGTH_SHORT).show();
-		info = mPlaylistManager.nextSong();
+		mPlaylistManager.setPosition(position);
+		HashMap<String,String> info = mPlaylistManager.currentSong();
 		
-		
-		if (info!=null){
-			Toast.makeText(this, "Next song:", Toast.LENGTH_SHORT).show();
-			Toast.makeText(this,info.get(PlaylistManager.ARTIST), Toast.LENGTH_SHORT).show();
-			Toast.makeText(this,info.get(PlaylistManager.ALBUM), Toast.LENGTH_SHORT).show();
-			Toast.makeText(this,info.get(PlaylistManager.TITLE), Toast.LENGTH_SHORT).show();
-			Toast.makeText(this,info.get(PlaylistManager.DATAPATH), Toast.LENGTH_SHORT).show();
-		} else {
-			Toast.makeText(this, "This was the last song in the playlist", Toast.LENGTH_SHORT).show();
-		}*/
+		if (this.isPlayerBound && info!=null){
+			mPlayer.stopMusic();
+			mPlayer.setSong(
+					info.get(PlaylistManager.ALBUM),
+					info.get(PlaylistManager.ARTIST),
+					info.get(PlaylistManager.TITLE),
+					info.get(PlaylistManager.DATAPATH));
+			mPlayer.startMusic();
+		}
+
 	}
 	
 	public void onDoubleTap() {
@@ -121,13 +122,10 @@ public class PlaylistSongView extends ListActivity implements SimpleGestureListe
 		int id = pm.getSongIdAtPosition(pos-1);
 		if (id==-1) return;
 		
-		Toast.makeText(this, "id "+ id+ " position " +pos, Toast.LENGTH_SHORT).show();
+		//Toast.makeText(this, "id "+ id+ " position " +pos, Toast.LENGTH_SHORT).show();
 		switch (direction) {
 		case SimpleGestureFilter.SWIPE_RIGHT:
-			if (pm.addToCurrentPlaylist(id)) {
-				Toast.makeText(this, "Added " + str + " to playlist", Toast.LENGTH_SHORT).show();
-			}
-			
+
 			break;
 		case SimpleGestureFilter.SWIPE_LEFT:
 			if (pm.removeFromCurrentPlaylist(id)) {
@@ -141,6 +139,32 @@ public class PlaylistSongView extends ListActivity implements SimpleGestureListe
 
 	}
 
+    private ServiceConnection mConnection = new ServiceConnection() {
+    	public void onServiceConnected(ComponentName classname, IBinder service){
+    		Log.d(TAG, "onServiceConnected: Player Service Connected" + classname.toShortString());
+    		
+    		Player player = ((Player.DataBinder)service).getService();
+    		mPlayer = player;
+    		    		
+    		isPlayerBound = true;
+    	}
+    	public void onServiceDisconnected(ComponentName classname){
+    		Log.d(TAG, "onServiceDisconnected: Player Service Disconnected");
+    		
+    		isPlayerBound = false;
+    	}
+    };
+    
+    private void bind() {
+    	Log.d(TAG, "bind: Attempting to bind to Player" );
+    	
+    	
+    	try {
+    		getParent().bindService(new Intent("com.uid.DroidDoesMusic.player.Player"), mConnection, Context.BIND_AUTO_CREATE);
+    	} catch(NullPointerException e) {
+	    	bindService(new Intent("com.uid.DroidDoesMusic.player.Player"), mConnection, Context.BIND_AUTO_CREATE);
+	    }
+    }
 
 }
 

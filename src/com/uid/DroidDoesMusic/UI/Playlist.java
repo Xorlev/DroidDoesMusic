@@ -11,13 +11,21 @@ import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
+import android.provider.MediaStore.Audio;
 import android.util.Log;
+import android.view.ContextMenu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
+import android.view.ContextMenu.ContextMenuInfo;
+import android.widget.Adapter;
 import android.widget.EditText;
 import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.Toast;
+import android.widget.AdapterView.AdapterContextMenuInfo;
 
+import com.uid.DroidDoesMusic.R;
 import com.uid.DroidDoesMusic.util.PlaylistManager;
 
 /**
@@ -41,12 +49,36 @@ public class Playlist extends ListActivity {
         
         mAdapter = PlaylistManager.getInstance(this).listPlaylists();
        	this.setListAdapter(mAdapter);
+       	registerForContextMenu(getListView());
 	}
 	
 	@Override
 	protected void onResume(){
 		super.onResume();
 		registerReceiver(addPlaylistReceiver, new IntentFilter(Main.ADDPLAYLIST));
+	}
+	
+	
+	
+	@Override
+	public void onCreateContextMenu(ContextMenu menu, View v, ContextMenuInfo menuInfo) {
+		super.onCreateContextMenu(menu, v, menuInfo);
+		MenuInflater mf = getMenuInflater();
+		mf.inflate(R.menu.playlist_context, menu);
+	}
+
+	
+	@Override
+	public boolean onContextItemSelected(MenuItem menuitem) {
+		AdapterContextMenuInfo info = (AdapterContextMenuInfo)menuitem.getMenuInfo();
+		
+		switch (menuitem.getItemId()){
+		case R.id.delete_playlist:
+			PlaylistManager pm = PlaylistManager.getInstance(this);
+			pm.deletePlaylist(info.position);
+			break;
+		}
+		return true;
 	}
 	
 	@Override

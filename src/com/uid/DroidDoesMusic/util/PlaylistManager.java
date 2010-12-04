@@ -26,7 +26,7 @@ import com.uid.DroidDoesMusic.player.Player;
 public class PlaylistManager {
 	static private PlaylistManager instance;
 	Context context;
-	ContentResolver cr;
+	private ContentResolver cr;
 	private static final String TAG = new String("DroidDoesMusic");
 	private static Player mPlayer;
 	private static boolean isPlayerBound;
@@ -36,6 +36,7 @@ public class PlaylistManager {
 	private static Cursor mCurrentPlaylistMembers;
 	private static final String [] STAR = {"*"};
 	private static SharedPreferences sp;
+	
 
 	//Positions in the next song string array
 	public static final String ARTIST="ARTIST";
@@ -355,6 +356,14 @@ public class PlaylistManager {
 				uri = context.getContentResolver().insert(MediaStore.Audio.Playlists.EXTERNAL_CONTENT_URI, values);
 			}
 		}
+	}
+
+	public int deletePlaylist(int position) {
+		if (mCur.moveToPosition(position)){
+			int Playlist_Id = mCur.getInt(mCur.getColumnIndex(Audio.Playlists._ID));
+			//Toast.makeText(context,"uri path just deleted song: "+uri.getPath(), Toast.LENGTH_SHORT).show();
+			return cr.delete(MediaStore.Audio.Playlists.EXTERNAL_CONTENT_URI, MediaStore.Audio.Playlists._ID +" = "+ Playlist_Id, null);			
+		} else return 0;
 	}
 
 

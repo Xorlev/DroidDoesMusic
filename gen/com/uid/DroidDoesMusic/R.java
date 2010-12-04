@@ -34,22 +34,23 @@ public final class R {
         public static final int StreamQueueSize=0x7f07000b;
         public static final int StreamQueueView=0x7f07000e;
         public static final int StreamTextView=0x7f07000a;
-        public static final int about=0x7f070016;
+        public static final int about=0x7f070018;
         public static final int about_content=0x7f070002;
         public static final int about_icon=0x7f070001;
-        public static final int addplaylist=0x7f070019;
+        public static final int addplaylist=0x7f070016;
         public static final int artist_id=0x7f070000;
         public static final int content=0x7f070008;
+        public static final int delete_playlist=0x7f07001a;
         public static final int drawer=0x7f070006;
-        public static final int group1=0x7f070018;
+        public static final int group1=0x7f070015;
         public static final int handle=0x7f070007;
         public static final int icon=0x7f070003;
         public static final int main_linear=0x7f070012;
-        public static final int quit=0x7f070017;
-        public static final int settings=0x7f070015;
-        public static final int song_add_playlist=0x7f07001b;
-        public static final int song_enqueue_next=0x7f07001a;
-        public static final int song_play=0x7f07001c;
+        public static final int quit=0x7f070019;
+        public static final int settings=0x7f070017;
+        public static final int song_add_playlist=0x7f07001c;
+        public static final int song_enqueue_next=0x7f07001b;
+        public static final int song_play=0x7f07001d;
         public static final int text1=0x7f070005;
         public static final int text2=0x7f070004;
         public static final int textview=0x7f070014;
@@ -61,10 +62,12 @@ public final class R {
         public static final int listen=0x7f030003;
         public static final int main=0x7f030004;
         public static final int nowplaying=0x7f030005;
+        public static final int textinput=0x7f030006;
     }
     public static final class menu {
         public static final int menu=0x7f080000;
-        public static final int song_context=0x7f080001;
+        public static final int playlist_context=0x7f080001;
+        public static final int song_context=0x7f080002;
     }
     public static final class string {
         public static final int about_label=0x7f050010;
@@ -75,6 +78,7 @@ public final class R {
         public static final int add_shortcut=0x7f050020;
         public static final int app_name=0x7f050001;
         public static final int ctx_add_playlist=0x7f05001d;
+        public static final int ctx_delete_playlist=0x7f050021;
         public static final int ctx_enqueue=0x7f05001c;
         public static final int ctx_play=0x7f05001e;
         public static final int empty=0x7f05000b;

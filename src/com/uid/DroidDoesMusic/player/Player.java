@@ -11,6 +11,7 @@ import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.media.MediaPlayer.OnCompletionListener;
 import android.os.Binder;
@@ -19,6 +20,8 @@ import android.os.IBinder;
 import android.preference.PreferenceManager;
 import android.provider.MediaStore;
 import android.util.Log;
+import android.widget.RemoteViews;
+import android.widget.Toast;
 
 import com.uid.DroidDoesMusic.R;
 import com.uid.DroidDoesMusic.util.PlaylistManager;
@@ -48,6 +51,8 @@ public class Player extends Service implements OnCompletionListener {
 	
 	private LinkedList<Song> songQueue = new LinkedList<Song>();
 	private PlaylistManager pm;
+	
+	AudioManager mAudioManager;
 
 	public void onCreate(){
 		super.onCreate();
@@ -152,6 +157,8 @@ public class Player extends Service implements OnCompletionListener {
 				Log.d(TAG, "Player: lbm->playbackResumed");
 				lbm.playbackResumed(artist, album, title, mp.getDuration(), mp.getCurrentPosition());
 			}
+		
+			//mAudioManager.requestAudioFocus(mAudioFocusListener, AudioManager.STREAM_MUSIC, AudioManager.AUDIOFOCUS_GAIN);
 				
 		    mp.start();
 			isSongStarted = true;
@@ -271,6 +278,12 @@ public class Player extends Service implements OnCompletionListener {
 		
 		getApplicationContext().sendBroadcast(new Intent(SERVICE_UPDATE_QUEUE_NAME));
 		//Toast.makeText(this, title + " " + getResources().getString(R.string.enqueue_last_success), Toast.LENGTH_SHORT).show();
+		
+		//RemoteViews rv = new RemoteViews("com.uid.DroidDoesMusic", R.layout.listen);
+		//rv.setTextViewText(R.id.StreamQueueSize, "[" + String.valueOf(songQueue.size()) + "]");
+		//rv.setTextViewText(R.id.StreamTextView, "O_O");
+		
+		Toast.makeText(this, title + " added to position " + songQueue.size() + " in the immediate queue.", Toast.LENGTH_LONG).show();
 		
 		// Return position in queue
 		return songQueue.size();

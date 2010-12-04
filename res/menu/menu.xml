@@ -15,7 +15,7 @@
 	<group android:id="@+id/group1">
 		<item android:id="@+id/addplaylist"
 			android:title="@string/add_playlists_label"
-			android:icon="@android:drawable/ic_input_add"
+			android:icon="@android:drawable/ic_menu_add"
 			android:alphabeticShortcut = "@string/add_shortcut" />
 	</group>
 </menu>

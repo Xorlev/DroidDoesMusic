@@ -109,7 +109,7 @@ public class LibrarySongView extends ListActivity implements SimpleGestureListen
 			pos = number;
 		}
 		
-		cur.moveToPosition(pos);
+		cur.moveToPosition(pos-1);
 
 		int id = cur.getInt(cur.getColumnIndex(Audio.Media._ID));
 		String artist = cur.getString(cur.getColumnIndex(Audio.Media.ARTIST));

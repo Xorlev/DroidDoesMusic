@@ -118,6 +118,7 @@ public class Playlist extends ListActivity {
 		i.putExtra(PlaylistSongView.INTENT_ITEM_PLAYLIST_NAME,(String)v.getTag(android.R.id.text1));
 		i.putExtra(PlaylistSongView.INTENT_ITEM_PLAYLIST_ID, playlistId);
 		i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+
 		startActivity(i);
 		
 	}

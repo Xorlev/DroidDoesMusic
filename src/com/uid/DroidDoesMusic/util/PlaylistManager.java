@@ -30,7 +30,8 @@ public class PlaylistManager {
 	private static final String TAG = new String("DroidDoesMusic");
 	private static Player mPlayer;
 	private static boolean isPlayerBound;
-	private static Cursor mCur;
+	private static Cursor mMembersCursor;
+	private static Cursor mPlaylistCursor;
 	private static int mPosition;
 	private static int mCurrentPlaylist;
 	private static Cursor mCurrentPlaylistMembers;
@@ -83,16 +84,16 @@ public class PlaylistManager {
 		int layout = android.R.layout.simple_list_item_1;
 		int[] display = new int[] { android.R.id.text1};
 
-		mCur = cr.query(android.provider.MediaStore.Audio.Playlists.EXTERNAL_CONTENT_URI, projection, null, null, Audio.Playlists.DEFAULT_SORT_ORDER);
+		mPlaylistCursor = cr.query(android.provider.MediaStore.Audio.Playlists.EXTERNAL_CONTENT_URI, projection, null, null, Audio.Playlists.DEFAULT_SORT_ORDER);
 
 		try{
-			mCur.moveToFirst();
+			mPlaylistCursor.moveToFirst();
 		} catch (NullPointerException e){
 			return null;
 		}
 		//TODO this line causes something crazy to happen if there is no music
 		//Log.d("DroidDoesMusic","Here I am:   "+mCur.getInt(mCur.getColumnIndex(Audio.Playlists._ID)));
-		SimpleCursorAdapter adapter = new SimpleCursorAdapter(context,layout,mCur,displayColumns,display);
+		SimpleCursorAdapter adapter = new SimpleCursorAdapter(context,layout,mPlaylistCursor,displayColumns,display);
 
 		return adapter;
 	}
@@ -107,12 +108,12 @@ public class PlaylistManager {
 	 * @return
 	 */
 	public int getSongIdAtPosition(int pos){
-		int old = mCur.getPosition();
+		int old = mMembersCursor.getPosition();
 		int id=-1;
-		if (mCur.moveToPosition(pos)){
-			id = mCur.getInt(mCur.getColumnIndex(Audio.Playlists.Members.AUDIO_ID));
+		if (mMembersCursor.moveToPosition(pos)){
+			id = mMembersCursor.getInt(mMembersCursor.getColumnIndex(Audio.Playlists.Members.AUDIO_ID));
 		}
-		mCur.moveToPosition(old);
+		mMembersCursor.moveToPosition(old);
 		return id;
 	}
 
@@ -132,13 +133,15 @@ public class PlaylistManager {
 	 * @return
 	 */
 	public ListAdapter listSongs( int playlistId){
+		
 		ListAdapter adapter;
 		String[] displayColumns = {Audio.AudioColumns.TITLE};
 		int layout = android.R.layout.simple_list_item_1;
 		int[] display = new int[] { android.R.id.text1};
 		Uri membersUri = MediaStore.Audio.Playlists.Members.getContentUri("external", playlistId);
-		mCur = cr.query(membersUri, STAR, null, null, Audio.Playlists.Members.DEFAULT_SORT_ORDER);
-		adapter = new SimpleCursorAdapter(context,layout,mCur,displayColumns,display);
+		mMembersCursor = cr.query(membersUri, STAR, null, null, Audio.Playlists.Members.PLAY_ORDER+" DESC");
+		adapter = new SimpleCursorAdapter(context,layout,mMembersCursor,displayColumns,display);
+		//songExists(0);
 		return adapter;
 	}
 	
@@ -155,8 +158,8 @@ public class PlaylistManager {
 	public HashMap<String,String> nextSong(){
 		HashMap<String,String> hashmap = new HashMap<String,String>();
 		Uri membersUri = MediaStore.Audio.Playlists.Members.getContentUri("external", mCurrentPlaylist);
-		Cursor currentSongQuery = cr.query(membersUri, STAR, null, null, Audio.Playlists.Members.DEFAULT_SORT_ORDER);
-		currentSongQuery = mCur;
+		Cursor currentSongQuery = cr.query(membersUri, STAR, null, null, Audio.Playlists.Members.PLAY_ORDER+" DESC");
+		currentSongQuery = mMembersCursor;
 		
 		if(currentSongQuery!=null){
 			if(currentSongQuery.moveToPosition(mPosition)){
@@ -196,7 +199,7 @@ public class PlaylistManager {
 	public HashMap<String,String> previousSong(){
 		HashMap<String,String> hashmap = new HashMap<String,String>();
 		Uri membersUri = MediaStore.Audio.Playlists.Members.getContentUri("external", mCurrentPlaylist);
-		Cursor currentSongQuery = cr.query(membersUri, STAR, null, null, Audio.Playlists.Members.DEFAULT_SORT_ORDER);
+		Cursor currentSongQuery = cr.query(membersUri, STAR, null, null, Audio.Playlists.Members.PLAY_ORDER+" DESC");
 		if(currentSongQuery!=null){
 			if(currentSongQuery.moveToPosition(mPosition)){
 				if(currentSongQuery.moveToPrevious()){
@@ -220,17 +223,17 @@ public class PlaylistManager {
 
 
 	/**
-	 *returns a string array with info about the current song
+	 *returns a hasmap with info about the current song
 	 * use PlaylistManager.ARTIST, PlaylistManager.ALBUM
 	 * PlaylistManager.TITLE, PlaylistManager.DATAPATH for the
-	 * indexes on the string array.
+	 * keys.
 	 * Returns null if there is no known current song
 	 * @return
 	 */
 	public HashMap<String,String> currentSong(){
 		HashMap<String,String> hashmap = new HashMap<String,String>();
 		Uri membersUri = MediaStore.Audio.Playlists.Members.getContentUri("external", mCurrentPlaylist);
-		Cursor currentSongQuery = cr.query(membersUri, STAR, null, null, Audio.Playlists.Members.DEFAULT_SORT_ORDER);
+		Cursor currentSongQuery = cr.query(membersUri, STAR, null, null, Audio.Playlists.Members.PLAY_ORDER+" DESC");
 		if(currentSongQuery!=null){
 			if(currentSongQuery.moveToPosition(mPosition)){
 				String song [] = new String[4];
@@ -369,13 +372,28 @@ public class PlaylistManager {
 	}
 
 	public int deletePlaylist(int position) {
-		if (mCur.moveToPosition(position)){
-			int Playlist_Id = mCur.getInt(mCur.getColumnIndex(Audio.Playlists._ID));
+		if (mPlaylistCursor.moveToPosition(position)){
+			int Playlist_Id = mPlaylistCursor.getInt(mPlaylistCursor.getColumnIndex(Audio.Playlists._ID));
 			//Toast.makeText(context,"uri path just deleted song: "+uri.getPath(), Toast.LENGTH_SHORT).show();
 			return cr.delete(MediaStore.Audio.Playlists.EXTERNAL_CONTENT_URI, MediaStore.Audio.Playlists._ID +" = "+ Playlist_Id, null);			
 		} else return 0;
 	}
 
-
+	public boolean songExists(int audioId){
+		String filter = Audio.Media._ID;
+		int colcount = mMembersCursor.getColumnCount(); 
+		Uri idUri = MediaStore.Audio.Playlists.Members.getContentUri("external", this.mCurrentPlaylist);
+		String[] proj = {Audio.Media._ID};
+		
+		Cursor cur = cr.query(idUri, proj, null, null, Audio.Playlists.Members.DEFAULT_SORT_ORDER);
+		cur.moveToFirst();
+		for (int i=0;i<colcount;i++){
+			Log.d(TAG,"column: " +i+" = "+cur.getColumnIndex(MediaStore.Audio.Playlists.Members._ID)+  " = " + cur.getString(i));
+		}
+		
+	//	cr.query(Audio.Media.EXTERNAL_CONTENT_URI, {"*"}, selection, selectionArgs, sortOrder)
+		return true;
+		
+	}
 
 }

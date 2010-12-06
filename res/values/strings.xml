@@ -17,7 +17,7 @@
 	
 	<string name="queue_view">Up Next</string>
 	
-	<string name="fastscroll_index">\'0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ</string>
+	<string name="fastscroll_index">ABCDEFGHIJKLMNOPQRSTUVWXYZ</string>
 	
 	<string name="unknown_artist">Unknown Artist</string>
 	<string name="unknown_album">Unknown Album</string>

@@ -242,7 +242,7 @@ public class PlaylistManager {
 				hashmap.put(TITLE,currentSongQuery.getString(currentSongQuery.getColumnIndex(Audio.Media.TITLE)));
 				hashmap.put(DATAPATH,currentSongQuery.getString(currentSongQuery.getColumnIndex(Audio.Media.DATA)));
 				hashmap.put(ID,currentSongQuery.getString(currentSongQuery.getColumnIndex(Audio.Media._ID)));
-				Toast.makeText(context,"current playlist id: "+mCurrentPlaylist, Toast.LENGTH_SHORT).show();
+				//Toast.makeText(context,"current playlist id: "+mCurrentPlaylist, Toast.LENGTH_SHORT).show();
 				return hashmap;	
 			}else {
 				return null;

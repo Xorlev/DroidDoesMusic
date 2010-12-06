@@ -95,6 +95,7 @@ public class PlaylistSongView extends ListActivity implements SimpleGestureListe
 					info.get(PlaylistManager.TITLE),
 					info.get(PlaylistManager.DATAPATH));
 			mPlayer.startMusic();
+			finish();
 		}
 
 	}

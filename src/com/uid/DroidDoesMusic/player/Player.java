@@ -227,7 +227,7 @@ public class Player extends Service implements OnCompletionListener {
 	public void prevSong() {
 		boolean startSong = false;
 		
-		if (mp.getCurrentPosition() != 0 && mp.getDuration() > 10000 && mp.getCurrentPosition() < 10000) {
+		if (mp.getCurrentPosition() != 0  && mp.getCurrentPosition() > 1200) {
 			// Pause the song
 			pauseMusic();
 			
@@ -241,10 +241,10 @@ public class Player extends Service implements OnCompletionListener {
 			HashMap<String,String> prevSong = pm.previousSong();
 			
 			if (prevSong != null) {
-				String artist = prevSong.get(MediaStore.Audio.Media.ARTIST);
-				String album = prevSong.get(MediaStore.Audio.Media.ALBUM);
-				String title = prevSong.get(MediaStore.Audio.Media.TITLE);
-				String datapath = prevSong.get(MediaStore.Audio.Media.DATA);
+				String artist = prevSong.get(PlaylistManager.ARTIST);
+				String album = prevSong.get(PlaylistManager.ALBUM);
+				String title = prevSong.get(PlaylistManager.TITLE);
+				String datapath = prevSong.get(PlaylistManager.DATAPATH);
 				setSong(artist, album, title, datapath);
 				startSong = true;
 			}
@@ -255,7 +255,7 @@ public class Player extends Service implements OnCompletionListener {
 			new Handler().postDelayed(new Runnable() { 
 				public void run() { 
 					startMusic(); 
-				}}, 1000);
+				}}, 10);
 		}
 	}
 	

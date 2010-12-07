@@ -22,5 +22,12 @@
 			android:layout_height="wrap_content"
 			android:layout_toRightOf="@+id/about_icon"
 			android:text="@string/about_text" />
+		<TextView
+			android:id="@+id/about_version"
+			android:layout_alignParentRight="true"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:textStyle="bold|italic"
+			android:layout_below="@+id/about_content" />
 	</RelativeLayout>
 </ScrollView>

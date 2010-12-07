@@ -113,7 +113,10 @@ public class Player extends Service implements OnCompletionListener {
 			String album = currentSong.get(MediaStore.Audio.Media.ALBUM);
 			String title = currentSong.get(MediaStore.Audio.Media.TITLE);
 			String datapath = currentSong.get(MediaStore.Audio.Media.DATA);
-			setSong(artist, album, title, datapath);
+			
+			if (datapath != null) {
+				setSong(artist, album, title, datapath);
+			}
 		}
 	}
 	
